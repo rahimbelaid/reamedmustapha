@@ -83,8 +83,6 @@ router.get('/messagerie', estadmin, async (req, res) => {
       .sort(ordreTri)
       .skip((page - 1) * limit)
       .limit(limit);
-
-    <%= vue === 'envoyes' ? '📥 Reçus' : '📤 Envoyés' %>
     const vue = req.query.vue === 'envoyes' ? 'envoyes' : 'recus';
 
     res.render('messagerie', {
