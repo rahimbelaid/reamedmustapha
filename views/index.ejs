@@ -519,10 +519,10 @@
                         <a href="/formations">Formations</a>
                         <a href="/protocoles">Nos protocoles</a>
                         <a href="/experiences">Nos expériences</a>
-                        <% if (user && user.role === 'malade') { %>
+                        <% if (utilisateur && utilisateur.role === 'malade') { %>
                           <a href="/malades">Espace Malades</a>
                         <% } %>
-                        <% if (user && user.role === 'personnel') { %>
+                        <% if (utilisateur && utilisateur.role === 'personnel') { %>
                           <a href="/personnel">Espace Personnel</a>
                         <% } %>
                       </nav>
