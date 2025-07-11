@@ -44,7 +44,7 @@ router.get('/', async (req, res) => {
       .skip((page - 1) * messagesParPage)
       .limit(messagesParPage);
 
-    res.render('admin/messagerie', {
+    res.render('/messagerie', {
       messages,
       currentPage: page,
       totalPages,
@@ -83,7 +83,7 @@ router.post('/:id/repondre', async (req, res) => {
     });
 
     await messageEnvoye.save();
-    res.redirect('/admin/messagerie?vue=envoyes');
+    res.redirect('/messagerie?vue=envoyes');
   } catch (error) {
     console.error('Erreur lors de la réponse :', error.message);
     res.status(500).send('Erreur lors de la réponse');
@@ -116,7 +116,7 @@ router.post('/envoyer', async (req, res) => {
     });
 
     await messageEnvoye.save();
-    res.redirect('/admin/messagerie?vue=envoyes');
+    res.redirect('/messagerie?vue=envoyes');
   } catch (error) {
     console.error('Erreur envoi message :', error.message);
     res.status(500).send('Erreur envoi message');
@@ -127,7 +127,7 @@ router.post('/envoyer', async (req, res) => {
 router.post('/:id/supprimer', async (req, res) => {
   try {
     await Message.findByIdAndDelete(req.params.id);
-    res.redirect('/admin/messagerie');
+    res.redirect('/messagerie');
   } catch (error) {
     console.error('Erreur suppression message :', error.message);
     res.status(500).send('Erreur suppression');
