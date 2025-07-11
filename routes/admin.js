@@ -84,6 +84,9 @@ router.get('/messagerie', estadmin, async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit);
 
+    <%= vue === 'envoyes' ? '📥 Reçus' : '📤 Envoyés' %>
+    const vue = req.query.vue === 'envoyes' ? 'envoyes' : 'recus';
+
     res.render('messagerie', {
       messages,
       recherche,
@@ -91,7 +94,8 @@ router.get('/messagerie', estadmin, async (req, res) => {
       utilisateur: req.session.utilisateur,
       currentPage: page,
       totalPages,
-      showForm: true
+      showForm: true,
+      vue // ✅ On l'ajoute ici pour l'utiliser dans le fichier EJS
     });
   } catch (err) {
     console.error('Erreur lors de la récupération des messages :', err);
