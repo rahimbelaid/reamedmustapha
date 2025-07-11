@@ -445,26 +445,26 @@
           <div class="header-content">
             <% if (utilisateur) { 
               let role = utilisateur.role;
-              let gaucheLogo = 'logo-gauche.png';
-              let droitLogo = 'logo-droit.png';
+              let logo-gauche = 'logo-gauche.png';
+              let logo-droit = 'logo-droit.png';
 
               if (role === 'kinesitherapeute') {
-                gaucheLogo = 'logo-gauche1.png'; droitLogo = 'logo-droit1.png';
+                logo-gauche = 'logo-gauche1.png'; logo-droit = 'logo-droit1.png';
               } else if (role === 'admin' || role === 'adminprincipal') {
-                gaucheLogo = 'logo-gauche2.png'; droitLogo = 'logo-droit2.png';
+                logo-gauche = 'logo-gauche2.png'; logo-droit = 'logo-droit2.png';
               } else if (role === 'infirmier') {
-                gaucheLogo = 'logo-gauche3.png'; droitLogo = 'logo-droit3.png';
+                logo-gauche = 'logo-gauche3.png'; logo-droit = 'logo-droit3.png';
               } else if (role === 'aidesoignant') {
-                gaucheLogo = 'logo-gauche4.png'; droitLogo = 'logo-droit4.png';
+                logo-gauche = 'logo-gauche4.png'; logo-droit = 'logo-droit4.png';
               } else if (role === 'malade') {
-                gaucheLogo = 'logo-gauche5.png'; droitLogo = 'logo-droit5.png';
+                logo-gauche = 'logo-gauche5.png'; logo-droit = 'logo-droit5.png';
               } else if (role === 'manipulateur') {
-                gaucheLogo = 'logo-gauche6.png'; droitLogo = 'logo-droit6.png';
+                logo-gauche = 'logo-gauche6.png'; logo-droit = 'logo-droit6.png';
               }
             %>
-              <img src="/images/<%= gaucheLogo %>" alt="Logo gauche personnalisé">
+              <img src="/images/<%= logo-gauche.png %>" alt="logo-gauche personnalisé">
             <% } else { %>
-              <img src="/images/logo-gauche.png" alt="Logo gauche par défaut">
+              <img src="/images/logo-gauche.png" alt="logo-gauche par défaut">
             <% } %>
 
             <div class="titre-et-tagline">
@@ -473,9 +473,9 @@
             </div>
 
             <% if (utilisateur) { %>
-              <img src="/images/<%= logo-droit.png %>" alt="Logo droit personnalisé">
+              <img src="/images/<%= logo-droit.png %>" alt="logo-droit personnalisé">
             <% } else { %>
-              <img src="/images/logo-droit.png" alt="Logo droit par défaut">
+              <img src="/images/logo-droit.png" alt="logo-droit par défaut">
             <% } %>
           </div>
 
