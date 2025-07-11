@@ -383,7 +383,7 @@
     const params = new URLSearchParams(window.location.search);
     const vueActuelle = params.get("vue") || "recus";
     params.set("vue", vueActuelle === "recus" ? "envoyes" : "recus");
-    window.location.href = "/admin/messagerie?" + params.toString();
+    window.location.href = "/messagerie?" + params.toString();
   }
 
   window.onclick = function(event) {
