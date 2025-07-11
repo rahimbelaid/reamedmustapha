@@ -441,55 +441,58 @@
   </div>
 
   <!-- === EN-TÊTE === -->
-        <header>
-          <div class="header-content">
-            <% 
-              let logogauche = 'logogauche.png';
-              let logodroit = 'logodroit.png';
+              <header>
+                <div class="header-content">
+                    <% 
+                      const role = utilisateur?.role;
+                      let logogauche = 'logogauche.png';
+                      let logodroit = 'logodroit.png';
 
-              if (role === 'kinesitherapeute') {
-                logogauche = 'logogauche1.png'; logodroit = 'logodroit1.png';
-              } else if (role === 'admin' || role === 'adminprincipal') {
-                logogauche = 'logogauche2.png'; logodroit = 'logodroit2.png';
-              } else if (role === 'infirmier') {
-                logogauche = 'logogauche3.png'; logodroit = 'logodroit3.png';
-              } else if (role === 'aidesoignant') {
-                logogauche = 'logogauche4.png'; logodroit = 'logodroit4.png';
-              } else if (role === 'malade') {
-                logogauche = 'logogauche5.png'; logodroit = 'logodroit5.png';
-              } else if (role === 'manipulateur') {
-                logogauche = 'logogauche6.png'; logodroit = 'logodroit6.png';
-              }
-            %>
-              <img src="/images/<%= logogauche.png %>" alt="logogauche personnalisé">
-            <% } else { %>
-              <img src="/images/logogauche.png" alt="logogauche par défaut">
-            <% } %>
+                      if (role) {
+                        switch (role) {
+                          case 'kinesitherapeute':
+                            logogauche = 'logogauche1.png';
+                            logodroit = 'logodroit1.png';
+                            break;
+                          case 'admin':
+                          case 'adminprincipal':
+                            logogauche = 'logogauche2.png';
+                            logodroit = 'logodroit2.png';
+                            break;
+                          case 'infirmier':
+                            logogauche = 'logogauche3.png';
+                            logodroit = 'logodroit3.png';
+                            break;
+                          case 'aidesoignant':
+                            logogauche = 'logogauche4.png';
+                            logodroit = 'logodroit4.png';
+                            break;
+                          case 'malade':
+                            logogauche = 'logogauche5.png';
+                            logodroit = 'logodroit5.png';
+                            break;
+                          case 'manipulateur':
+                            logogauche = 'logogauche6.png';
+                            logodroit = 'logodroit6.png';
+                            break;
+                        }
+                      }
+                    %>
 
-            <div class="titre-et-tagline">
-              <h1>Service de Réanimation Médicale Polyvalente - CHU Mustapha</h1>
-              <p class="tagline">« Allier science et compassion en situation critique. »</p>
-            </div>
+                  <img src="/images/<%= logogauche %>" alt="logo gauche personnalisé">
 
-            <% if (utilisateur) { %>
-              <img src="/images/<%= logo-droit.png %>" alt="logo-droit personnalisé">
-            <% } else { %>
-              <img src="/images/logo-droit.png" alt="logo-droit par défaut">
-            <% } %>
-          </div>
+                  <div class="titre-et-tagline">
+                    <h1>Service de Réanimation Médicale Polyvalente - CHU Mustapha</h1>
+                    <p class="tagline">« Allier science et compassion en situation critique. »</p>
+                  </div>
 
-          <nav>
-            <a href="/">Accueil</a>
-            <a href="/presentation">Présentation</a>
-            <a href="/equipe">Équipe</a>
-            <a href="/contact">Contact</a>
-            <a href="/formations">Formations</a>
-            <a href="/protocoles">Nos protocoles</a>
-            <a href="/experiences">Nos expériences</a>
-            <a href="/malades">Espace Malades</a>
-            <a href="/personnel">Espace Personnel</a>
-          </nav>
-        </header>
+                  <% if (utilisateur) { %>
+                    <img src="/images/<%= logodroit %>" alt="logo droit personnalisé">
+                  <% } else { %>
+                    <img src="/images/logodroit.png" alt="logo droit par défaut">
+                  <% } %>
+                </div>
+              </header>
 
   <!-- === CONTENU PRINCIPAL === -->
   <main>
