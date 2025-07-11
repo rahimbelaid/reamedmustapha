@@ -342,68 +342,87 @@
     }
 
 
-    /* === THÈME SOMBRE POUR ADMIN/ADMINPRINCIPAL === */
-    body.dark-theme {
-      background-color: #121212;
-      color: #e0e0e0;
-    }
+      /* === THÈME SOMBRE POUR ADMIN/ADMINPRINCIPAL === */
+      :root {
+        --bg-color: #1e1e2f;
+        --card-color: #2a2a3d;
+        --text-color: #ffffff;
+        --border-color: #444;
+        --primary: #4dabf7;
+        --accent: #ffcb6b;
+      }
 
-    body.dark-theme header,
-    body.dark-theme .top-bar,
-    body.dark-theme nav {
-      background-color: #1f1f1f;
-      color: #ffffff;
-    }
+      body.dark-theme {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: 'Segoe UI', sans-serif;
+      }
 
-    body.dark-theme .top-bar {
-      border-bottom: 1px solid #333;
-    }
+      /* Entêtes, barres du haut, navigation */
+      body.dark-theme header,
+      body.dark-theme .top-bar,
+      body.dark-theme nav {
+        background-color: var(--card-color);
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
+      }
 
-    body.dark-theme .auth-buttons .btn-auth {
-      background-color: #333;
-      color: #e0e0e0;
-    }
+      /* Pied de page */
+      body.dark-theme footer {
+        background-color: var(--card-color);
+        color: #cccccc;
+        border-top: 1px solid var(--border-color);
+      }
 
-    body.dark-theme .btn-auth:hover {
-      background-color: #444;
-      color: #fff;
-    }
+      /* Boutons d’authentification */
+      body.dark-theme .auth-buttons .btn-auth {
+        background-color: #333;
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+      }
 
-    body.dark-theme nav a {
-      color: #cccccc;
-    }
+      body.dark-theme .btn-auth:hover {
+        background-color: #444;
+        color: #fff;
+      }
 
-    body.dark-theme nav a:hover {
-      color: #ffffff;
-    }
+      /* Navigation */
+      body.dark-theme nav a {
+        color: #cccccc;
+      }
 
-    body.dark-theme .carousel-container {
-      background-color: #1a1a1a;
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
-    }
+      body.dark-theme nav a:hover {
+        color: #ffffff;
+      }
 
-    body.dark-theme .overlay {
-      background-color: rgba(30, 30, 30, 0.8);
-    }
+      /* Carrousel */
+      body.dark-theme .carousel-container {
+        background-color: var(--card-color);
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+      }
 
-    body.dark-theme .actualites-container {
-      border: 2px solid #444;
-      background-color: #1e1e1e;
-    }
+      /* Overlay */
+      body.dark-theme .overlay {
+        background-color: rgba(30, 30, 48, 0.85);
+      }
 
-    body.dark-theme .actualites-title {
-      color: #87cefa;
-    }
+      /* Conteneur d’actualités */
+      body.dark-theme .actualites-container {
+        border: 2px solid var(--border-color);
+        background-color: var(--card-color);
+      }
 
-    body.dark-theme footer {
-      background-color: #1f1f1f;
-      color: #cccccc;
-    }
+      /* Titre des actualités */
+      body.dark-theme .actualites-title {
+        color: var(--accent);
+      }
 
-    body.dark-theme .header-content img {
-      background-color: #2b2b2b;
-      padding: 8px;
-      border-radius: 8px;
+      /* Images dans l’en-tête */
+      body.dark-theme .header-content img {
+        background-color: #2b2b3d;
+        padding: 8px;
+        border-radius: 8px;
+      }
     }
   </style>
 </head>
