@@ -492,6 +492,22 @@
                     <img src="/images/logodroit.png" alt="logo droit par défaut">
                   <% } %>
                 </div>
+                    <nav>
+                        <a href="/">Accueil</a>
+                        <a href="/presentation">Présentation</a>
+                        <a href="/equipe">Équipe</a>
+                        <a href="/contact">Contact</a>
+                        <a href="/formations">Formations</a>
+                        <a href="/protocoles">Nos protocoles</a>
+                        <a href="/experiences">Nos expériences</a>
+                        <% if (user && user.role === 'malade') { %>
+                          <a href="/malades">Espace Malades</a>
+                        <% } %>
+                        <% if (user && user.role === 'personnel') { %>
+                          <a href="/personnel">Espace Personnel</a>
+                        <% } %>
+                      </nav>
+                    </header>
               </header>
 
   <!-- === CONTENU PRINCIPAL === -->
