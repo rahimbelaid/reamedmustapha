@@ -8,7 +8,6 @@ const flash = require('connect-flash');
 const mongoose = require('./config/db');
 const cron = require('node-cron'); // 🔁 Cron pour exécuter receiveMail
 const { exec } = require('child_process');
-const receiveEmails = require('./receiveMail'); // 📥 Script de réception des emails
 
 const app = express();
 
@@ -85,27 +84,6 @@ app.get('/', (req, res) => {
 // ✅ Middleware pour gérer les erreurs 404
 app.use((req, res) => {
   res.status(404).render('404');
-});
-
-
-
-console.log('🟢 Lancement de l’application avec lecture automatique des emails toutes les 5 minutes...');
-
-// Planifie la tâche toutes les 5 minutes
-cron.schedule('*/5 * * * *', () => {
-  console.log('⏰ Lecture automatique des emails (Gmail API)...');
-
-  exec('node readEmails.js', (error, stdout, stderr) => {
-    if (error) {
-      console.error(`❌ Erreur: ${error.message}`);
-      return;
-    }
-    if (stderr) {
-      console.error(`⚠️ STDERR: ${stderr}`);
-      return;
-    }
-    console.log(stdout);
-  });
 });
 
 module.exports = app;
