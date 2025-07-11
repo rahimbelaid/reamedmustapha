@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Inscription</title>
+  <style>
+    #code-verification {
+      display: none;
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border: 2px solid #ccc;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
+    .flash-error {
+      color: red;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .flash-success {
+      color: green;
+      text-align: center;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Inscription</h1>
+
+  <!-- Affichage des messages flash -->
+  <% if (locals.error && locals.error.length > 0) { %>
+    <div class="flash-error"><%= error[0] %></div>
+  <% } %>
+
+  <% if (locals.success && locals.success.length > 0) { %>
+    <div class="flash-success"><%= success[0] %></div>
+  <% } %>
+
+  <!-- Affichage des erreurs envoyées directement (ex: code incorrect) -->
+  <% if (typeof erreur !== 'undefined' && erreur) { %>
+    <p style="color: red; text-align: center;"><%= erreur %></p>
+  <% } %>
+
+  <form id="registerForm" method="POST" action="/register">
+    <input type="text" name="nom" placeholder="Nom complet" value="<%= nom || '' %>" required><br>
+    <input type="email" name="email" placeholder="Email" value="<%= email || '' %>" required><br>
+    <input type="password" name="motdepasse" placeholder="Mot de passe" required><br>
+
+    <label for="role">Type d'utilisateur :</label>
+    <select name="role" required>
+      <option value="">-- Choisissez --</option>
+      <option value="medecin" <%= role === 'medecin' ? 'selected' : '' %>>Médecin</option>
+      <option value="infirmier" <%= role === 'infirmier' ? 'selected' : '' %>>Infirmier</option>
+      <option value="kinesitherapeute" <%= role === 'kinesitherapeute' ? 'selected' : '' %>>Kinésithérapeute</option>
+      <option value="aide-soignant" <%= role === 'aide-soignant' ? 'selected' : '' %>>Aide-soignant</option>
+      <option value="malade" <%= role === 'malade' ? 'selected' : '' %>>Malade</option>
+    </select><br>
+
+    <input type="hidden" name="codeSaisi" id="codeSaisi">
+    <button type="submit" <%= codeSent ? 'disabled' : '' %>>S'inscrire</button>
+  </form>
+
+  <div id="overlay"></div>
+  <div id="code-verification">
+    <p>Un code vous a été envoyé par email.</p>
+    <input type="text" id="code" placeholder="Entrez le code reçu">
+    <button type="button" onclick="soumettreCode()">Valider</button>
+    <button type="button" onclick="fermerPlaque()">Annuler</button>
+  </div>
+
+  <script>
+    function afficherPlaque() {
+      document.getElementById("overlay").style.display = "block";
+      document.getElementById("code-verification").style.display = "block";
+    }
+
+    function fermerPlaque() {
+      document.getElementById("overlay").style.display = "none";
+      document.getElementById("code-verification").style.display = "none";
+    }
+
+    function soumettreCode() {
+      const code = document.getElementById("code").value.trim();
+      if (!code) {
+        alert("Veuillez entrer un code.");
+        return;
+      }
+      document.getElementById("codeSaisi").value = code;
+      document.getElementById("registerForm").submit();
+    }
+
+    <% if (codeSent) { %>
+      window.onload = function() {
+        afficherPlaque();
+      };
+    <% } %>
+  </script>
+</body>
+</html>
+

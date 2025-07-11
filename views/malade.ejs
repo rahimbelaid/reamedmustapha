@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Page Malade - Service Réanimation</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    header, footer {
+      background-color: #003366;
+      color: white;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px 20px;
+      background-color: #003366;
+      border-bottom: 1px solid #002244;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-auth {
+      background-color: white;
+      color: #003366;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-auth:hover {
+      background-color: #e6e6e6;
+      transform: scale(1.05);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 40px;
+    }
+
+    .header-content img {
+      height: 150px;
+    }
+
+    .titre-et-tagline {
+      text-align: center;
+      flex: 1;
+    }
+
+    .titre-et-tagline h1 {
+      font-size: 26px;
+      margin: 10px 0;
+    }
+
+    nav {
+      text-align: center;
+      background-color: #002244;
+      padding: 10px 0;
+    }
+
+    nav a {
+      color: white;
+      margin: 0 12px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #cce0ff;
+    }
+
+    main {
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .section-option {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .option-card {
+      width: 280px;
+      border: 3px solid #007BFF;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      background-color: #f0f8ff;
+      cursor: pointer;
+      transition: transform 0.4s ease, box-shadow 0.3s ease;
+      animation: fadeIn 1.5s ease forwards;
+    }
+
+    .option-card:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+    }
+
+    .option-card h2 {
+      color: #007BFF;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      animation: popIn 1s ease-in-out forwards;
+      transition: color 0.4s ease, transform 0.3s ease;
+    }
+
+    .option-card:hover h2 {
+      color: #0056b3;
+      transform: scale(1.1) rotate(-1deg);
+    }
+
+    .option-card p {
+      font-size: 16px;
+      color: #333;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes popIn {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      60% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    footer {
+      background-color: #003366;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 14px;
+      margin-top: 60px;
+    }
+
+    .poster-wrapper {
+      position: fixed;
+      top: 30%;
+      right: -400px;
+      z-index: 10000;
+      transition: right 0.4s ease, opacity 0.4s ease;
+      opacity: 0.6;
+      border-radius: 8px 0 0 8px;
+    }
+
+    .poster-wrapper img {
+      height: 300px;
+      cursor: pointer;
+    }
+
+    .poster-wrapper:hover {
+      right: 0;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barre top Connexion -->
+  <div class="top-bar">
+    <div class="auth-buttons">
+      <button class="btn-auth" onclick="location.href='/login'">Connexion</button>
+      <button class="btn-auth" onclick="location.href='/register'">Inscription</button>
+      <button class="btn-auth" onclick="logout()" style="display: none;">Déconnexion</button>
+    </div>
+  </div>
+
+  <!-- En-tête principal -->
+  <header>
+    <div class="header-content">
+      <img src="/images/logo-gauche.png" alt="Logo gauche">
+      <div class="titre-et-tagline">
+        <h1>Service de Réanimation Médicale Polyvalente - CHU Mustapha</h1>
+        <p>« Allier science et compassion en situation critique. »</p>
+      </div>
+      <img src="/images/logo-droit.png" alt="Logo droit">
+    </div>
+    <nav>
+      <a href="/">Accueil</a>
+      <a href="/presentation">Présentation</a>
+      <a href="/equipe">Équipe</a>
+      <a href="/contact">Contact</a>
+      <a href="/formations">Formations</a>
+      <a href="/protocoles">Nos protocoles</a>
+      <a href="/experiences">Nos expériences</a>
+      <a href="/malades">Espace Malades</a>
+    </nav>
+  </header>
+  <script>
+    const connecte = localStorage.getItem("connecte") === "true";
+    const email = localStorage.getItem("email");
+
+    // Protection de la page "Espace Malades"
+    if (!connecte || email !== "malade@example.com") {
+      window.location.href = "/login";
+    }
+  </script>
+
+  <!-- Contenu principal -->
+  <main>
+    <div class="section-option">
+      <div class="option-card" onclick="window.location.href='/dossier'">
+        <h2>Dossier</h2>
+        <p>Gérer les dossiers médicaux complets des patients avec téléchargement en PDF.</p>
+      </div>
+      <div class="option-card" onclick="window.location.href='/consultation'">
+        <h2>Consultation</h2>
+        <p>Accéder aux consultations, notes, et historiques médicaux.</p>
+      </div>
+      <div class="option-card" onclick="window.location.href='/taches'">
+        <h2>Tâches</h2>
+        <p>Suivre et planifier les soins, interventions et tâches médicales.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Pied de page -->
+  <footer>
+    <p>&copy; 2025 Service de Réanimation - CHU Mustapha. Tous droits réservés.</p>
+  </footer>
+
+  <!-- Poster latéral -->
+  <div class="poster-wrapper">
+    <a href="https://sarm.dz/" target="_blank">
+      <img src="/images/ton-image.jpg" alt="SARM Affiche">
+    </a>
+  </div>
+
+  <!-- Script déconnexion -->
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = "/login";
+    }
+  </script>
+  <script src="/js/script.js"></script>
+</body>
+</html>

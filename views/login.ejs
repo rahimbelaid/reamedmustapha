@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.5rem;
+      box-sizing: border-box;
+    }
+    .error-message {
+      color: red;
+      margin-top: 1rem;
+      text-align: center;
+    }
+    .success-message {
+      color: green;
+      margin-top: 1rem;
+      text-align: center;
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Connexion</h2>
+    <form action="/login" method="POST">
+      <div class="form-group">
+        <label for="email">Adresse Email</label>
+        <input type="email" id="email" name="email" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="motdepasse">Mot de passe</label>
+        <input type="password" id="motdepasse" name="motdepasse" required autocomplete="current-password">
+      </div>
+      <button type="submit">Se connecter</button>
+    </form>
+
+    <!-- 🔥 Affichage des messages flash -->
+    <% if (error && error.length > 0) { %>
+      <div class="error-message"><%= error[0] %></div>
+    <% } %>
+
+    <% if (success && success.length > 0) { %>
+      <div class="success-message"><%= success[0] %></div>
+    <% } %>
+  </div>
+</body>
+</html>
+
+
