@@ -116,7 +116,7 @@ router.post('/envoyer', async (req, res) => {
     });
 
     await messageEnvoye.save();
-    res.redirect('/messagerie?vue=envoyes');
+    res.redirect('messagerie?vue=envoyes');
   } catch (error) {
     console.error('Erreur envoi message :', error.message);
     res.status(500).send('Erreur envoi message');
