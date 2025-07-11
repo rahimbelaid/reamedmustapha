@@ -444,26 +444,26 @@
         <header>
           <div class="header-content">
             <% 
-              let logo-gauche = 'logo-gauche.png';
-              let logo-droit = 'logo-droit.png';
+              let logogauche = 'logogauche.png';
+              let logodroit = 'logodroit.png';
 
               if (role === 'kinesitherapeute') {
-                logo-gauche = 'logo-gauche1.png'; logo-droit = 'logo-droit1.png';
+                logogauche = 'logogauche1.png'; logodroit = 'logodroit1.png';
               } else if (role === 'admin' || role === 'adminprincipal') {
-                logo-gauche = 'logo-gauche2.png'; logo-droit = 'logo-droit2.png';
+                logogauche = 'logogauche2.png'; logodroit = 'logodroit2.png';
               } else if (role === 'infirmier') {
-                logo-gauche = 'logo-gauche3.png'; logo-droit = 'logo-droit3.png';
+                logogauche = 'logogauche3.png'; logodroit = 'logodroit3.png';
               } else if (role === 'aidesoignant') {
-                logo-gauche = 'logo-gauche4.png'; logo-droit = 'logo-droit4.png';
+                logogauche = 'logogauche4.png'; logodroit = 'logodroit4.png';
               } else if (role === 'malade') {
-                logo-gauche = 'logo-gauche5.png'; logo-droit = 'logo-droit5.png';
+                logogauche = 'logogauche5.png'; logodroit = 'logodroit5.png';
               } else if (role === 'manipulateur') {
-                logo-gauche = 'logo-gauche6.png'; logo-droit = 'logo-droit6.png';
+                logogauche = 'logogauche6.png'; logodroit = 'logodroit6.png';
               }
             %>
-              <img src="/images/<%= logo-gauche.png %>" alt="logo-gauche personnalisé">
+              <img src="/images/<%= logogauche.png %>" alt="logogauche personnalisé">
             <% } else { %>
-              <img src="/images/logo-gauche.png" alt="logo-gauche par défaut">
+              <img src="/images/logogauche.png" alt="logogauche par défaut">
             <% } %>
 
             <div class="titre-et-tagline">
