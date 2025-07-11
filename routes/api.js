@@ -59,7 +59,7 @@ router.post('/promouvoir-principal/:id', async (req, res) => {
 router.post('/retablir-role/:id', async (req, res) => {
   try {
     const utilisateur = await Utilisateur.findById(req.params.id);
-    if (!utilisateur || !user.roleInitial) {
+    if (!utilisateur || !utilisateur.roleInitial) {
       return res.status(400).send('Rôle initial introuvable');
     }
 
