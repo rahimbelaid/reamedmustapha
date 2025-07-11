@@ -13,10 +13,54 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// ✅ Route POST pour répondre à un message reçu
+// ✅ GET /admin/messagerie — Affichage principal
+router.get('/', async (req, res) => {
+  const recherche = req.query.recherche || '';
+  const tri = req.query.tri || 'date';
+  const page = parseInt(req.query.page) || 1;
+  const vue = req.query.vue === 'envoyes' ? 'envoyes' : 'recus';
+  const messagesParPage = 10;
+
+  try {
+    const filtre = {
+      ...(vue === 'envoyes' ? { type: 'envoye' } : { $or: [{ type: { $exists: false } }, { type: { $ne: 'envoye' } }] }),
+      $or: [
+        { nom: { $regex: recherche, $options: 'i' } },
+        { email: { $regex: recherche, $options: 'i' } },
+        { message: { $regex: recherche, $options: 'i' } },
+      ]
+    };
+
+    const sortOptions = {
+      date: { date: -1 },
+      nom: { nom: 1 },
+      email: { email: 1 },
+    };
+
+    const totalMessages = await Message.countDocuments(filtre);
+    const totalPages = Math.ceil(totalMessages / messagesParPage);
+    const messages = await Message.find(filtre)
+      .sort(sortOptions[tri])
+      .skip((page - 1) * messagesParPage)
+      .limit(messagesParPage);
+
+    res.render('admin/messagerie', {
+      messages,
+      currentPage: page,
+      totalPages,
+      tri,
+      recherche,
+      vue,
+    });
+  } catch (error) {
+    console.error('Erreur chargement messagerie :', error.message);
+    res.status(500).send('Erreur chargement messagerie');
+  }
+});
+
+// ✅ POST /messagerie/:id/repondre — Répondre à un message reçu
 router.post('/:id/repondre', async (req, res) => {
   const { objet, messageTexte } = req.body;
-
   try {
     const messageOriginal = await Message.findById(req.params.id);
     if (!messageOriginal) return res.status(404).send('Message non trouvé.');
@@ -30,7 +74,6 @@ router.post('/:id/repondre', async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    // Enregistrement du message envoyé
     const messageEnvoye = new Message({
       nom: messageOriginal.nom,
       email: messageOriginal.email,
@@ -38,20 +81,18 @@ router.post('/:id/repondre', async (req, res) => {
       message: messageTexte,
       type: 'envoye'
     });
-    await messageEnvoye.save();
 
-    res.redirect('/messagerie');
+    await messageEnvoye.save();
+    res.redirect('/admin/messagerie?vue=envoyes');
   } catch (error) {
-    console.error('Erreur lors de l’envoi de l’email :', error.message);
-    res.status(500).send('Erreur lors de l’envoi de l’email');
+    console.error('Erreur lors de la réponse :', error.message);
+    res.status(500).send('Erreur lors de la réponse');
   }
 });
 
-
-// ✅ Route POST pour "Nouveau message" (depuis le bouton en haut à droite)
+// ✅ POST /messagerie/envoyer — Nouveau message (admin)
 router.post('/envoyer', async (req, res) => {
   const { email, objet, message } = req.body;
-
   if (!email || !message) {
     return res.status(400).send('Email et message sont requis.');
   }
@@ -66,20 +107,30 @@ router.post('/envoyer', async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    // Enregistrer ce message comme "envoyé"
     const messageEnvoye = new Message({
-      nom: 'Admin', // Ou autre nom par défaut
+      nom: 'Admin',
       email,
       objet,
       message,
       type: 'envoye'
     });
-    await messageEnvoye.save();
 
-    res.redirect('/messagerie');
+    await messageEnvoye.save();
+    res.redirect('/admin/messagerie?vue=envoyes');
   } catch (error) {
-    console.error('Erreur envoi nouveau message :', error.message);
-    res.status(500).send('Erreur lors de l’envoi du message.');
+    console.error('Erreur envoi message :', error.message);
+    res.status(500).send('Erreur envoi message');
+  }
+});
+
+// ✅ POST /messagerie/:id/supprimer — Supprimer message
+router.post('/:id/supprimer', async (req, res) => {
+  try {
+    await Message.findByIdAndDelete(req.params.id);
+    res.redirect('/admin/messagerie');
+  } catch (error) {
+    console.error('Erreur suppression message :', error.message);
+    res.status(500).send('Erreur suppression');
   }
 });
 

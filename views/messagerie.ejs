@@ -87,6 +87,22 @@
       background-color: #138496;
     }
 
+    .btn-envoyes {
+      background-color: #ffc107;
+      color: black;
+      border: none;
+      padding: 12px 24px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-envoyes:hover {
+      background-color: #e0a800;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -234,16 +250,19 @@
 <body>
 <div class="page-container">
   <main>
-    <div style="display: flex; justify-content: flex-end; margin: 20px;">
+    <div style="display: flex; justify-content: space-between; margin: 20px;">
+      <button class="btn-envoyes" onclick="basculerVue()">
+        <%= vue === 'envoyes' ? '📥 Reçus' : '📤 Envoyés' %>
+      </button>
       <button class="btn-nouveau" onclick="ouvrirModaleNouveau()">+ Nouveau</button>
     </div>
 
-    <h1>📥 Messages reçus</h1>
+    <h1><%= vue === 'envoyes' ? '📤 Messages envoyés' : '📥 Messages reçus' %></h1>
 
     <div class="actions-container">
       <div class="tri-container">
         <label for="tri">Trier par :</label>
-        <select id="tri" onchange="location.href='?tri='+this.value+'&recherche=<%= recherche %>'">
+        <select id="tri" onchange="location.href='?tri='+this.value+'&recherche=<%= recherche %>&vue=<%= vue %>'">
           <option value="date" <%= tri==='date'?'selected':'' %>>Date</option>
           <option value="nom" <%= tri==='nom'?'selected':'' %>>Nom</option>
           <option value="email" <%= tri==='email'?'selected':'' %>>Email</option>
@@ -253,6 +272,7 @@
         <label for="recherche">Rechercher :</label>
         <input type="text" id="recherche" name="recherche" placeholder="Nom, email ou message" value="<%= recherche %>">
         <input type="hidden" name="tri" value="<%= tri %>">
+        <input type="hidden" name="vue" value="<%= vue %>">
         <input type="submit" value="Rechercher">
       </form>
     </div>
@@ -275,10 +295,16 @@
             <td><%= message.message %></td>
             <td><%= message.date.toLocaleString() %></td>
             <td>
-              <form method="POST" action="/messagerie/<%= message._id %>/supprimer" onsubmit="return confirm('Supprimer ce message ?');">
-                <button type="submit" class="delete-button">Supprimer</button>
-              </form>
-              <button class="reply-button" onclick="ouvrirModale('<%= message._id %>', '<%= message.nom %>', '<%= message.email %>')">Répondre</button>
+              <% if (vue === 'recus') { %>
+                <form method="POST" action="/messagerie/<%= message._id %>/supprimer" onsubmit="return confirm('Supprimer ce message ?');">
+                  <button type="submit" class="delete-button">Supprimer</button>
+                </form>
+                <button class="reply-button" onclick="ouvrirModale('<%= message._id %>', '<%= message.nom %>', '<%= message.email %>')">Répondre</button>
+              <% } else { %>
+                <form method="POST" action="/messagerie/<%= message._id %>/supprimer" onsubmit="return confirm('Supprimer ce message ?');">
+                  <button type="submit" class="delete-button">Supprimer</button>
+                </form>
+              <% } %>
             </td>
           </tr>
         <% }) %>
@@ -287,7 +313,7 @@
 
     <div class="pagination">
       <% for(let i=1; i<=totalPages; i++){ %>
-        <a href="?page=<%= i %>&tri=<%= tri %>&recherche=<%= recherche %>" class="<%= i===currentPage?'active':'' %>">
+        <a href="?page=<%= i %>&tri=<%= tri %>&recherche=<%= recherche %>&vue=<%= vue %>" class="<%= i===currentPage?'active':'' %>">
           <%= i %>
         </a>
       <% } %>
@@ -353,15 +379,18 @@
     document.getElementById('modaleNouveau').style.display = 'none';
   }
 
+  function basculerVue() {
+    const params = new URLSearchParams(window.location.search);
+    const vueActuelle = params.get("vue") || "recus";
+    params.set("vue", vueActuelle === "recus" ? "envoyes" : "recus");
+    window.location.href = "/admin/messagerie?" + params.toString();
+  }
+
   window.onclick = function(event) {
     const modaleReponse = document.getElementById('modaleReponse');
     const modaleNouveau = document.getElementById('modaleNouveau');
-    if (event.target === modaleReponse) {
-      modaleReponse.style.display = 'none';
-    }
-    if (event.target === modaleNouveau) {
-      modaleNouveau.style.display = 'none';
-    }
+    if (event.target === modaleReponse) modaleReponse.style.display = 'none';
+    if (event.target === modaleNouveau) modaleNouveau.style.display = 'none';
   }
 </script>
 </body>
