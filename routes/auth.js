@@ -1,13 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
+dotenv.config();
 const Utilisateur = require('../models/utilisateur');
 const Log = require('../models/log');
 const { envoyerCode } = require('../utils/mailer');
 
 // GET /login
 router.get('/login', (req, res) => {
-  res.render('login');
+  res.render('login', {
+    title: 'Connexion - Service de Réanimation',
+    error: req.flash('error'),
+    success: req.flash('success'),
+    utilisateur: req.user || null
+  });
 });
 
 // POST /login
@@ -49,6 +58,56 @@ router.post('/login', async (req, res) => {
     return res.redirect('/');
   });
 })
+router.post('/reset-password', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const utilisateur = await Utilisateur.findOne({ email });
+
+    // Toujours répondre pareil par sécurité
+    if (!utilisateur) {
+      return res.status(200).send('Si un compte existe, un mail a été envoyé.');
+    }
+
+    // Générer un token JWT valable 1h
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+    // Transporter pour envoyer l'e-mail
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_FROM,
+        pass: process.env.EMAIL_PASS,
+      }
+    });
+
+    // Contenu de l'e-mail
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: utilisateur.email,
+      subject: 'Réinitialisation du mot de passe',
+      html: `
+        <p>Bonjour,</p>
+        <p>Cliquez sur ce lien pour réinitialiser votre mot de passe :</p>
+        <a href="${resetLink}">${resetLink}</a>
+        <p>Ce lien expire dans 1 heure.</p>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).send('Si un compte existe, un mail a été envoyé.');
+  } catch (err) {
+    console.error('Erreur :', err);
+    res.status(500).send("Une erreur est survenue.");
+  }
+});
 
 // GET /logout
 router.get('/logout', async (req, res) => {

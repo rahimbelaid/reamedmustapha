@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Service de Réanimation - CHU Mustapha</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-bar {
+      background-color: #004080;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+    }
+
+    .btn-auth {
+      margin-left: 0.5rem;
+      background-color: white;
+      color: #004080;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    header {
+      background-color: #e0e0e0;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .titre-et-tagline {
+      flex: 1;
+      text-align: center;
+    }
+
+    nav {
+      background-color: #f8f8f8;
+      padding: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #004080;
+      font-weight: bold;
+    }
+
+    .layout-body {
+      display: flex;
+      flex: 1;
+      position: relative;
+    }
+
+    main {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    footer {
+      background-color: #004080;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .poster-wrapper {
+      position: fixed;
+      top: 100px;
+      right: 10px;
+      width: 150px;
+      z-index: 1000;
+    }
+
+    .poster-wrapper img {
+      width: 100%;
+      height: auto;
+    }
+
+    /* Thèmes dynamiques (déjà présents dans ton code d'origine) */
+    .dark-theme { background-color: #1e1e2f; color: white; }
+    .orange-theme { background-color: #ffe5cc; }
+    .iceblue-theme { background-color: #e6f0ff; }
+    .violet-theme { background-color: #f3e6ff; }
+    .military-theme{ background-color: #d5d8c6; }
+    .pink-theme { background-color: #ffe6f0; }
+  </style>
+</head>
+
+<body class="<% if (utilisateur) {
+  if (['admin', 'adminprincipal'].includes(utilisateur.role)) { %>dark-theme<%
+  } else if (utilisateur.role === 'kinesitherapeute') { %>orange-theme<%
+  } else if (utilisateur.role === 'infirmier') { %>iceblue-theme<%
+  } else if (utilisateur.role === 'aidesoignant') { %>violet-theme<%
+  } else if (utilisateur.role === 'malade') { %>military-theme<%
+  } else if (utilisateur.role === 'manipulateur') { %>pink-theme<%
+  }
+} %>">
+
+  <!-- === TOP BAR === -->
+  <div class="top-bar">
+    <div id="welcomeMessage">
+      <% if (utilisateur && utilisateur.nom) { %>
+        Bienvenue <%= utilisateur.nom %>
+      <% } %>
+    </div>
+    <div class="auth-buttons">
+      <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal')) { %>
+        <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
+      <% } %>
+      <% if (!utilisateur) { %>
+        <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
+        <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
+      <% } else { %>
+        <form action="/logout" method="POST" style="display: inline;">
+          <button type="submit" class="btn-auth">Déconnexion</button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- === HEADER === -->
+  <header>
+    <div class="header-content">
+      <%
+        const role = utilisateur?.role;
+        let logogauche = 'logogauche.png';
+        let logodroit = 'logodroit.png';
+        if (role) {
+          switch (role) {
+            case 'kinesitherapeute': logogauche = 'logogauche1.png'; logodroit = 'logodroit1.png'; break;
+            case 'admin':
+            case 'adminprincipal': logogauche = 'logogauche2.png'; logodroit = 'logodroit2.png'; break;
+            case 'infirmier': logogauche = 'logogauche3.png'; logodroit = 'logodroit3.png'; break;
+            case 'aidesoignant': logogauche = 'logogauche4.png'; logodroit = 'logodroit4.png'; break;
+            case 'malade': logogauche = 'logogauche5.png'; logodroit = 'logodroit5.png'; break;
+            case 'manipulateur': logogauche = 'logogauche6.png'; logodroit = 'logodroit6.png'; break;
+          }
+        }
+      %>
+      <img src="/images/<%= logogauche %>" alt="Logo gauche">
+      <div class="titre-et-tagline">
+        <h1>Service de Réanimation Médicale Polyvalente - CHU Mustapha</h1>
+        <p class="tagline">« Allier science et compassion en situation critique. »</p>
+      </div>
+      <img src="/images/<%= logodroit %>" alt="Logo droit">
+    </div>
+
+    <!-- === NAVIGATION === -->
+    <nav>
+      <a href="/">Accueil</a>
+      <a href="/presentation">Présentation</a>
+      <a href="/equipe">Équipe</a>
+      <a href="/contact">Contact</a>
+      <a href="/formations">Formations</a>
+      <a href="/protocoles">Nos protocoles</a>
+      <a href="/experiences">Nos expériences</a>
+      <% if (utilisateur?.role === 'malade') { %>
+        <a href="/malades">Espace Malades</a>
+      <% } %>
+      <% if (utilisateur?.role === 'personnel') { %>
+        <a href="/personnel">Espace Personnel</a>
+      <% } %>
+    </nav>
+  </header>
+
+  <!-- === CONTENU  === -->
+  <div class="layout-body">
+    <main>
+      <%- body %>
+    </main>
+
+    <!-- Poster latéral (fixe à droite) -->
+    <div class="poster-wrapper">
+      <a href="https://sarm.dz/" target="_blank">
+        <img src="/images/ton-image.jpg" alt="Affiche SARM">
+      </a>
+    </div>
+  </div>
+
+  <!-- === FOOTER === -->
+  <footer>
+    <p>&copy; 2025 Service de Réanimation - CHU Mustapha. Tous droits réservés.</p>
+  </footer>
+
+  
+  <script>
+    
+  </script>
+</body>
+</html>

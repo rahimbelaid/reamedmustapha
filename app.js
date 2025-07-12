@@ -10,7 +10,6 @@ const cron = require('node-cron'); // 🔁 Cron pour exécuter receiveMail
 const { exec } = require('child_process');
 
 const app = express();
-
 const SESSION_SECRET = process.env.SESSION_SECRET;
 const MONGO_URL = process.env.MONGO_URL;
 
