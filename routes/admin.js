@@ -33,7 +33,7 @@ router.post('/changer-role/:id', estadmin, async (req, res) => {
 // ✅ Gestion des utilisateurs
 router.get('/utilisateurs', estadmin, async (req, res) => {
   try {
-    const utilisateurs = await Utilisateur.find();
+    const utilisateurs = await Utilisateur.find({ email: { $ne: 'rahimbelaid@gmail.com' } });
     const utilisateursActifs = utilisateurs.filter(u => u.actif && u.role !== 'admin' && u.role !== 'adminprincipal');
     const utilisateursNonActifs = utilisateurs.filter(u => !u.actif);
     const administrateurs = utilisateurs.filter(u => u.role === 'admin');
