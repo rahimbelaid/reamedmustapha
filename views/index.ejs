@@ -524,9 +524,15 @@ logogauche = 'logogauche2.png';
                   <main>
                     <section class="carousel-container">
                       <div class="carousel-slides" id="carouselSlides">
-                        <img src="/panorama1.jpg" alt="Panorama 1">
-                        <img src="/panorama2.jpg" alt="Panorama 2">
-                        <img src="/panorama3.jpg" alt="Panorama 3">
+                        <% if (imagesCarrousel && imagesCarrousel.length > 0) { %>
+                          <% imagesCarrousel.forEach((img) => { %>
+                            <div>
+                              <img src="/uploads/<%= img.url %>" alt="Image du carrousel" style="width:200px;">
+                            </div>
+                          <% }) %>
+                        <% } else { %>
+                          <p>Aucune image.</p>
+                        <% } %>
                       </div>
                       <% if (!utilisateur) { %>
                         <div class="overlay">

@@ -4,7 +4,29 @@
   <title>Admin - Actualités</title>
 </head>
 <body>
-  <h1>Ajouter une actualité</h1>
+  <h1>Ajouter une image</h1>
+  <form action="/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="image" required>
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <h2>Images existantes</h2>
+  <section class="carousel-container">
+    <div class="carousel-slides" id="carouselSlides">
+      <% if (imagesCarrousel && imagesCarrousel.length > 0) { %>
+        <% imagesCarrousel.forEach((img) => { %>
+          <div>
+            <img src="/uploads/<%= img.url %>" alt="Image du carrousel" style="width:200px;">
+            <a href="/supprimer/<%= img._id %>">🗑 Supprimer</a>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p>Aucune image.</p>
+      <% } %>
+    </div>
+  </section>
+
+  <h2>Ajouter une actualité</h2>
   <form action="/admin/ajouter-actualite" method="POST">
     <label>Titre</label>
     <input type="text" name="titre" required><br>
