@@ -16,7 +16,7 @@ const utilisateurSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'adminprincipal', 'medecin', 'infirmier', 'kinesitherapeute', 'aide-soignant', 'manipulateur', 'malade'],
+    enum: ['admin', 'adminprincipal', 'superadmin', 'medecin', 'infirmier', 'kinesitherapeute', 'aide-soignant', 'manipulateur', 'malade'],
     required: true
   },
   roleInitial: {

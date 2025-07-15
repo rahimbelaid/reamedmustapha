@@ -416,7 +416,7 @@
   </style>
 </head>
   <body class="<% if (utilisateur) {
-    if (['admin', 'adminprincipal'].includes(utilisateur.role)) { %>dark-theme<% 
+    if (['admin', 'adminprincipal', 'superadmin'].includes(utilisateur.role)) { %>dark-theme<% 
     } else if (utilisateur.role === 'kinesitherapeute') { %>orange-theme<% 
     } else if (utilisateur.role === 'infirmier') { %>iceblue-theme<% 
     } else if (utilisateur.role === 'aide-soignant') { %>violet-theme<% 
@@ -434,7 +434,7 @@
       <% } %>
     </div>
     <div class="auth-buttons">
-      <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal')) { %>
+      <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal' || utilisateur.role === 'superadmin')) { %>
         <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
       <% } %>
       <% if (!utilisateur) { %>
@@ -464,7 +464,9 @@
                             break;
                           case 'admin':
                           case 'adminprincipal':
-                            logogauche = 'logogauche2.png';
+                          case 'superadmin':
+
+logogauche = 'logogauche2.png';
                             logodroit = 'logodroit2.png';
                             break;
                           case 'infirmier':

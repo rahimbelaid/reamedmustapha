@@ -4,10 +4,14 @@ const Log = require('../models/log');
 const Message = require('../models/message');
 const Utilisateur = require('../models/utilisateur');
 const { estadmin, estadminprincipal } = require('../middlewares/authMiddleware');
+const { estSuperAdmin } = require('../middlewares/authMiddleware');
 const siteController = require('../controllers/site');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
+router.get('/admin-secret', estSuperAdmin, (req, res) => {
+  res.send('Bienvenue superadmin');
+});
 // ✅ Dashboard admin
 router.get('/admin', estadmin, async (req, res) => {
   const utilisateurs = await Utilisateur.find();

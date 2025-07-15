@@ -5,8 +5,8 @@ const path = require('path');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
-const mongoose
-  = require('./config/db');
+const connectDB = require('./config/db'); // Importer la fonction de connexion à MongoDB
+connectDB(); // Connecter à MongoDB
 const cron = require('node-cron'); // 🔁 Cron pour exécuter receiveMail
 const { exec } = require('child_process');
 
