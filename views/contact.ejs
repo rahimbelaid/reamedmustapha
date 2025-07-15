@@ -1,0 +1,242 @@
+        <!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Contact - CHU Mustapha</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    section {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 51, 102, 0.2);
+      max-width: 600px;
+      margin: auto;
+      border: 2px solid #003366;
+      animation: fadeSlideIn 0.8s ease;
+      font-size: 18px;
+    }
+
+    @keyframes fadeSlideIn {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    section h2 {
+      color: #003366;
+      text-align: center;
+    }
+
+    .info-contact p {
+      color: #003366;
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group i {
+      position: absolute;
+      top: 38px;
+      left: 12px;
+      color: #003366;
+      font-size: 18px;
+      pointer-events: none;
+    }
+
+    form input,
+    form textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 12px 12px 40px;
+      border: 1px solid #003366;
+      border-radius: 4px;
+      color: #003366;
+      font-size: 16px;
+      background-color: #fdfdfd;
+      resize: vertical;
+    }
+
+    form input::placeholder,
+    form textarea::placeholder {
+      color: #7a9bbf;
+    }
+
+    form input:hover,
+    form textarea:hover,
+    form input:focus,
+    form textarea:focus {
+      outline: none;
+      box-shadow: 0 0 12px rgba(0, 102, 204, 0.8);
+      border-color: #0066cc;
+      background-color: #ffffff;
+    }
+
+    form label {
+      font-size: 17px;
+      color: #003366;
+      margin-left: 10px;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    form button {
+      background-color: #003366;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      font-size: 16px;
+      margin-left: 10px;
+    }
+
+    form button:hover {
+      background-color: #002244;
+      transform: scale(1.03);
+    }
+
+    /* Overlay confirmation */
+    #confirmationOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    #confirmationPopup {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      width: 80%;
+      max-width: 400px;
+      box-shadow: 0px 0px 15px rgba(0,0,0,0.3);
+      animation: popupSlideFadeIn 0.6s ease-out;
+      border: 3px solid #003366;
+      color: #003366;
+      font-weight: bold;
+    }
+
+    @keyframes popupSlideFadeIn {
+      0% {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .popup-logo {
+      max-width: 240px;
+      margin-bottom: 10px;
+    }
+
+    .btn-container {
+      text-align: center;
+    }
+
+    @media screen and (max-width: 600px) {
+      form input,
+      form textarea {
+        box-shadow: 0 0 14px rgba(0, 102, 204, 0.9);
+      }
+
+      .form-group i {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main>
+    <section>
+      <h2>Contactez-nous</h2>
+
+      <div class="info-contact">
+        <p><strong>Adresse :</strong> Place du 1er Mai 1945, Sidi M'Hamed, Alger, 16000, Algérie</p>
+        <p><strong>Localisation :</strong> <a href="https://www.google.com/maps?q=CHU+Mustapha,+Alger" target="_blank">Voir sur Google Maps</a></p>
+        <iframe src="https://www.google.com/maps?q=CHU+Mustapha,+Alger&output=embed" width="100%" height="300" style="border:0; border-radius:10px; margin-top:10px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <p><strong>Téléphone :</strong> 021 67 89 00</p>
+        <p><strong>Fax :</strong> 021 67 89 01</p>
+        <p><strong>Email :</strong> contact@reamedmustapha.com</p>
+      </div>
+
+      <form id="contactForm" action="/contact" method="POST">
+        <div class="form-group">
+          <label for="nom">Nom :</label>
+          <i class="fa fa-user"></i>
+          <input type="text" id="nom" name="nom" placeholder="Votre nom" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email :</label>
+          <i class="fa fa-envelope"></i>
+          <input type="email" id="email" name="email" placeholder="Votre email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message :</label>
+          <i class="fa fa-comment-dots"></i>
+          <textarea id="message" name="message" rows="5" placeholder="Votre message" required></textarea>
+        </div>
+
+        <div class="btn-container">
+          <button type="submit">Envoyer</button>
+        </div>
+      </form>
+
+      <div id="confirmationOverlay">
+        <div id="confirmationPopup">
+          <img src="/images/logo.png" alt="Logo" class="popup-logo"><br><br>
+          ✅ Merci pour votre message.<br>
+          Nous vous répondrons dans les plus brefs délais.<br><br>
+          <em>— L’équipe de Réanimation Médicale Polyvalente, CHU Mustapha</em>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <% if (success && success.length > 0) { %>
+    <script>
+      window.addEventListener('DOMContentLoaded', function() {
+        const overlay = document.getElementById('confirmationOverlay');
+        overlay.style.display = 'flex';
+
+        const form = document.getElementById('contactForm');
+        if (form) form.reset();
+
+        setTimeout(() => {
+          overlay.style.display = 'none';
+        }, 5000);
+      });
+    </script>
+  <% } %>
+
+</body>
+</html>

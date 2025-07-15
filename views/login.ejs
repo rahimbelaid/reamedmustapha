@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Connexion - Service de Réanimation - CHU Mustapha</title>
+  <style>
+    /* Votre CSS complet est maintenu et optimisé */
+    /* Connexion - Style amélioré avec animations */
+    .login-container {
+      max-width: 400px;
+      margin: 80px auto;
+      padding: 30px 25px;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 123, 255, 0.2);
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 26px;
+      color: #003366;
+      animation: popIn 0.6s ease;
+    }
+    .login-container form {
+      display: flex;
+      flex-direction: column;
+      align-items: centre;
+    }
+    .login-container input[type="text"],
+    .login-container input[type="password"],
+    .login-container input[type="email"] {
+      width: 90%;
+      padding: 12px 15px;
+      margin-bottom: 18px;
+      border: 1px solid #90caf9;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    .login-container input:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+      outline: none;
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to right, #007bff, #0056b3);
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.4s ease, transform 0.2s ease;
+    }
+
+    .login-container button:hover {
+      transform: scale(1.03);
+      background: linear-gradient(to right, #0056b3, #003366);
+    }
+
+    .login-container .login-footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .login-container .login-footer a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .login-container .login-footer a:hover {
+      text-decoration: underline;
+      color: #0056b3;
+    }
+
+    .error-message {
+      color: #d9534f;
+      background-color: #f9d6d5;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+      animation: shake 0.3s ease-in-out;
+    }
+
+    .success-message {
+      color: #28a745;
+      background-color: #d4edda;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+      animation: popIn 0.4s ease;
+    }
+
+    #forgotPasswordModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.5s ease;
+    }
+
+    #forgotPasswordModal > div {
+      background: linear-gradient(145deg, #ffffff, #e3f2fd);
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      animation: zoomIn 0.5s ease;
+    }
+
+    #forgotPasswordModal h3 {
+      margin-top: 0;
+      color: #003366;
+    }
+
+    #forgotPasswordModal form input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #90caf9;
+      border-radius: 6px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    #forgotPasswordModal form input:focus {
+      box-shadow: 0 0 6px #007bff;
+      outline: none;
+    }
+
+    #forgotPasswordModal button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #forgotPasswordModal button[type="submit"] {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    #forgotPasswordModal button[type="button"] {
+      background-color: #f1f1f1;
+      color: #333;
+    }
+
+    #forgotPasswordModal button:hover {
+      opacity: 0.9;
+    }
+
+    #forgotPasswordModal .close-button {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 18px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes zoomIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main {
+      flex: 1;
+    }
+
+    header, footer {
+      background-color: #003366;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #003366;
+      border-bottom: 1px solid #002244;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-auth {
+      background-color: white;
+      color: #003366;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 14px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+    .btn-auth:hover {
+      transform: scale(1.05);
+      background-color: #e6e6e6;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 40px;
+    }
+
+    .header-content img {
+      max-height: 150px;
+      height: auto;
+      width: auto;
+    }
+
+    .titre-et-tagline {
+      text-align: center;
+      flex: 1;
+    }
+
+    .titre-et-tagline h1 {
+      font-size: 26px;
+      margin: 10px 0 5px;
+    }
+
+    nav {
+      text-align: center;
+      background-color: #002244;
+      padding: 10px 0;
+    }
+
+    nav a {
+      margin: 0 12px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #cce0ff;
+    }
+
+    main {
+      padding: 20px;
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px 0;
+      margin-top: 30px;
+      font-size: 14px;
+    }
+
+    .poster-wrapper {
+      position: fixed;
+      top: 30%;
+      right: -400px;
+      z-index: 10000;
+      transition: right 0.4s ease, opacity 0.4s ease;
+      opacity: 0.6;
+      border-radius: 8px 0 0 8px;
+    }
+
+    .poster-wrapper img {
+      height: 300px;
+      cursor: pointer;
+    }
+
+    .poster-wrapper:hover {
+      right: 0;
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body class="<% if (utilisateur) {
+  if (['admin', 'adminprincipal'].includes(utilisateur.role)) { %>dark-theme<%
+  } else if (utilisateur.role === 'kinesitherapeute') { %>orange-theme<%
+  } else if (utilisateur.role === 'infirmier') { %>iceblue-theme<%
+  } else if (utilisateur.role === 'aidesoignant') { %>violet-theme<%
+  } else if (utilisateur.role === 'malade') { %>military-theme<%
+  } else if (utilisateur.role === 'manipulateur') { %>pink-theme<%
+  } } %>">
+
+  <!-- === BARRE DU HAUT === -->
+  <div class="top-bar">
+    <div id="welcomeMessage">
+      <% if (utilisateur && utilisateur.nom) { %>
+        Bienvenue <%= utilisateur.nom %>
+      <% } %>
+    </div>
+    <div class="auth-buttons">
+      <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal')) { %>
+        <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
+      <% } %>
+      <% if (!utilisateur) { %>
+        <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
+        <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
+      <% } else { %>
+        <form action="/logout" method="POST" style="display:inline;">
+          <button type="submit" class="btn-auth">Déconnexion</button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- === EN-TÊTE === -->
+  <header>
+    <div class="header-content">
+      <% let logogauche = 'logogauche.png'; let logodroit = 'logodroit.png';
+        switch(utilisateur?.role) {
+          case 'kinesitherapeute': logogauche='logogauche1.png'; logodroit='logodroit1.png'; break;
+          case 'admin': case 'adminprincipal': logogauche='logogauche2.png'; logodroit='logodroit2.png'; break;
+          case 'infirmier': logogauche='logogauche3.png'; logodroit='logodroit3.png'; break;
+          case 'aidesoignant': logogauche='logogauche4.png'; logodroit='logodroit4.png'; break;
+          case 'malade': logogauche='logogauche5.png'; logodroit='logodroit5.png'; break;
+          case 'manipulateur': logogauche='logogauche6.png'; logodroit='logodroit6.png'; break;
+        }
+      %>
+      <img src="/images/<%= logogauche %>" alt="logo gauche personnalisé">
+      <div class="titre-et-tagline">
+        <h1>Service de Réanimation Médicale Polyvalente - CHU Mustapha</h1>
+        <p class="tagline">« Allier science et compassion en situation critique. »</p>
+      </div>
+      <img src="/images/<%= utilisateur ? logodroit : 'logodroit.png' %>" alt="logo droit personnalisé">
+    </div>
+    <nav>
+      <a href="/">Accueil</a>
+      <a href="/presentation">Présentation</a>
+      <a href="/equipe">Équipe</a>
+      <a href="/contact">Contact</a>
+      <a href="/formations">Formations</a>
+      <a href="/protocoles">Nos protocoles</a>
+      <a href="/experiences">Nos expériences</a>
+      <% if (utilisateur?.role === 'malade') { %>
+        <a href="/malades">Espace Malades</a>
+      <% } %>
+      <% if (utilisateur?.role === 'personnel') { %>
+        <a href="/personnel">Espace Personnel</a>
+      <% } %>
+    </nav>
+  </header>
+
+  <!-- === CONTENU === -->
+  <main>
+    <div class="login-container">
+      <h2>Connexion</h2>
+      <form action="/login" method="POST">
+        <label for="email">Adresse Email</label>
+        <input type="email" id="email" name="email" required autocomplete="email">
+        <label for="motdepasse">Mot de passe</label>
+        <input type="password" id="motdepasse" name="motdepasse" required autocomplete="current-password">
+        <button type="submit">Se connecter</button>
+        <p><a href="#" id="forgotPasswordLink">Mot de passe oublié ?</a></p>
+      </form>
+
+      <% if (error && error.length > 0) { %>
+        <div class="error-message"><%= error[0] %></div>
+      <% } %>
+
+      <% if (success && success.length > 0) { %>
+        <div class="success-message"><%= success[0] %></div>
+      <% } %>
+    </div>
+  </main>
+
+  <!-- === PIED DE PAGE === -->
+  <footer>
+    <p>&copy; 2025 Service de Réanimation - CHU Mustapha. Tous droits réservés.</p>
+  </footer>
+
+  <div class="poster-wrapper">
+    <a href="https://sarm.dz/" target="_blank">
+      <img src="/ton-image.jpg" alt="Affiche SARM non trouvée">
+    </a>
+  </div>
+
+  <!-- === MODALE MOT DE PASSE OUBLIÉ === -->
+  <div id="forgotPasswordModal">
+    <div>
+      <h3>Réinitialiser le mot de passe</h3>
+      <p>Veuillez entrer votre adresse e-mail. Un lien de réinitialisation vous sera envoyé.</p>
+      <form action="/reset-password" method="POST">
+        <input type="email" name="email" placeholder="Votre adresse e-mail" required>
+        <div style="text-align: right;">
+          <button type="button" onclick="closeModal()">Annuler</button>
+          <button type="submit">Envoyer</button>
+        </div>
+      </form>
+      <button class="close-button" onclick="closeModal()">&times;</button>
+    </div>
+  </div>
+
+  <!-- === SCRIPT === -->
+  <script>
+    const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+    const modal = document.getElementById('forgotPasswordModal');
+
+    forgotPasswordLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      modal.style.display = 'flex';
+    });
+
+    function closeModal() {
+      modal.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

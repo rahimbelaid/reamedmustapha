@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Messagerie - Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --border-color: #555;
+      --text-color: #fff;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: var(--text-color);
+    }
+
+    .page-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    main { flex: 1; padding: 20px; }
+    h1 { text-align: center; color: #ffc107; margin-top: 20px; }
+
+    .actions-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .tri-container, .search-form {
+      display: flex;
+      align-items: center;
+    }
+
+    .tri-container label, .search-form label {
+      margin-right: 8px;
+      font-weight: bold;
+    }
+
+    select, input[type="text"] {
+      padding: 8px;
+      font-size: 16px;
+      background-color: #333;
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+
+    .search-form input[type="submit"] {
+      margin-left: 8px;
+      padding: 8px 14px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+
+    .search-form input[type="submit"]:hover {
+      background-color: #0069d9;
+    }
+
+    .btn-nouveau {
+      background-color: #17a2b8;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-nouveau:hover {
+      background-color: #138496;
+    }
+
+    .btn-envoyes {
+      background-color: #ffc107;
+      color: black;
+      border: none;
+      padding: 12px 24px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-envoyes:hover {
+      background-color: #e0a800;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      color: var(--text-color);
+      table-layout: fixed;
+    }
+
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 14px;
+      text-align: left;
+      word-wrap: break-word;
+    }
+
+    th {
+      background-color: #3a3a4d;
+    }
+
+    tr:hover {
+      background-color: #2f2f44;
+    }
+
+    th:nth-child(1), td:nth-child(1) { width: 150px; } /* Date */
+    th:nth-child(2), td:nth-child(2) { width: 150px; } /* Nom */
+    th:nth-child(3), td:nth-child(3) { width: 200px; } /* Email */
+    th:nth-child(4), td:nth-child(4) { width: auto; } /* Message (flexible) */
+    th:nth-child(5), td:nth-child(5) { width: 150px; } /* Action */
+
+    .delete-button {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .delete-button:hover {
+      background-color: #c82333;
+    }
+
+    .reply-button {
+      background-color: #28a745;
+      margin-top: 8px;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .reply-button:hover {
+      background-color: #218838;
+    }
+
+    .pagination {
+      text-align: center;
+      margin: 30px 0 40px;
+    }
+
+    .pagination a {
+      margin: 0 5px;
+      padding: 6px 12px;
+      text-decoration: none;
+      background-color: #444;
+      color: var(--text-color);
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .pagination a.active {
+      background-color: #ffc107;
+      color: black;
+      font-weight: bold;
+    }
+
+    .pagination a:hover {
+      background-color: #666;
+    }
+
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      background-color: #2f2f44;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 10px;
+    }
+
+    .modal-content h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-content label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    .modal-content input,
+    .modal-content textarea {
+      width: 100%;
+      padding: 10px;
+      background-color: #444;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 5px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 15px;
+    }
+
+    .modal-buttons button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-annuler {
+      background-color: #6c757d;
+      color: #fff;
+    }
+
+    .btn-envoyer {
+      background-color: #007bff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<div class="page-container">
+  <main>
+    <div style="display: flex; justify-content: space-between; margin: 20px;">
+      <button class="btn-envoyes" onclick="basculerVue()">
+        <%= vue === 'envoyes' ? '📥 Reçus' : '📤 Envoyés' %>
+      </button>
+      <button class="btn-nouveau" onclick="ouvrirModaleNouveau()">+ Nouveau</button>
+    </div>
+
+    <h1><%= vue === 'envoyes' ? '📤 Messages envoyés' : '📥 Messages reçus' %></h1>
+
+    <div class="actions-container">
+      <div class="tri-container">
+        <label for="tri">Trier par :</label>
+        <select id="tri" onchange="location.href='?tri='+this.value+'&recherche=<%= recherche %>&vue=<%= vue %>'">
+          <option value="date" <%= tri==='date'?'selected':'' %>>Date</option>
+          <option value="nom" <%= tri==='nom'?'selected':'' %>>Nom</option>
+          <option value="email" <%= tri==='email'?'selected':'' %>>Email</option>
+        </select>
+      </div>
+      <form class="search-form" method="GET" action="/admin/messagerie">
+        <label for="recherche">Rechercher :</label>
+        <input type="text" id="recherche" name="recherche" placeholder="Nom, email ou message" value="<%= recherche %>">
+        <input type="hidden" name="tri" value="<%= tri %>">
+        <input type="hidden" name="vue" value="<%= vue %>">
+        <input type="submit" value="Rechercher">
+      </form>
+    </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% messages.forEach(message => { %>
+                <tr>
+                  <td><%= message.date.toLocaleString() %></td>
+                  <td><%= message.nom %></td>
+                  <td><%= message.email %></td>
+                  <td><%= message.message %></td>
+                  <td>
+                    <% if (vue === 'recus') { %>
+                      <form method="POST" action="/messagerie/<%= message._id %>/supprimer" onsubmit="return confirm('Supprimer ce message ?');">
+                        <button type="submit" class="delete-button">Supprimer</button>
+                      </form>
+                      <button class="reply-button" onclick="ouvrirModale('<%= message._id %>', '<%= message.nom %>', '<%= message.email %>')">Répondre</button>
+                    <% } else { %>
+                      <form method="POST" action="/messagerie/<%= message._id %>/supprimer" onsubmit="return confirm('Supprimer ce message ?');">
+                        <button type="submit" class="delete-button">Supprimer</button>
+                      </form>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+
+    <div class="pagination">
+      <% for(let i=1; i<=totalPages; i++){ %>
+        <a href="?page=<%= i %>&tri=<%= tri %>&recherche=<%= recherche %>&vue=<%= vue %>" class="<%= i===currentPage?'active':'' %>">
+          <%= i %>
+        </a>
+      <% } %>
+    </div>
+  </main>
+</div>
+
+<!-- MODALE RÉPONSE -->
+<div id="modaleReponse" class="modal">
+  <div class="modal-content">
+    <h2>✉️ Répondre au message</h2>
+    <form method="POST" id="formulaireReponse">
+      <label for="objet">Objet</label>
+      <input type="text" name="objet" id="objet" required>
+      <label for="messageTexte">Message</label>
+      <textarea name="messageTexte" id="messageTexte" rows="6" required></textarea>
+      <div class="modal-buttons">
+        <button type="button" class="btn-annuler" onclick="fermerModale()">Annuler</button>
+        <button type="submit" class="btn-envoyer">Envoyer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODALE NOUVEAU -->
+<div id="modaleNouveau" class="modal">
+  <div class="modal-content">
+    <h2>✉️ Nouveau message</h2>
+    <form method="POST" action="/messagerie/envoyer">
+      <label for="emailNouveau">Email</label>
+      <input type="email" name="email" id="emailNouveau" required>
+
+      <label for="objetNouveau">Objet</label>
+      <input type="text" name="objet" id="objetNouveau">
+
+      <label for="messageNouveau">Message</label>
+      <textarea name="message" id="messageNouveau" rows="6" required></textarea>
+
+      <div class="modal-buttons">
+        <button type="button" class="btn-annuler" onclick="fermerModaleNouveau()">Annuler</button>
+        <button type="submit" class="btn-envoyer">Envoyer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function ouvrirModale(id, nom, email) {
+    const form = document.getElementById('formulaireReponse');
+    form.action = `/messagerie/${id}/repondre`;
+    document.getElementById('modaleReponse').style.display = 'block';
+  }
+
+  function fermerModale() {
+    document.getElementById('modaleReponse').style.display = 'none';
+  }
+
+  function ouvrirModaleNouveau() {
+    document.getElementById('modaleNouveau').style.display = 'block';
+  }
+
+  function fermerModaleNouveau() {
+    document.getElementById('modaleNouveau').style.display = 'none';
+  }
+
+  function basculerVue() {
+    const params = new URLSearchParams(window.location.search);
+    const vueActuelle = params.get("vue") || "recus";
+    params.set("vue", vueActuelle === "recus" ? "envoyes" : "recus");
+    window.location.href = "/messagerie?" + params.toString();
+  }
+
+  window.onclick = function(event) {
+    const modaleReponse = document.getElementById('modaleReponse');
+    const modaleNouveau = document.getElementById('modaleNouveau');
+    if (event.target === modaleReponse) modaleReponse.style.display = 'none';
+    if (event.target === modaleNouveau) modaleNouveau.style.display = 'none';
+  }
+</script>
+</body>
+</html>

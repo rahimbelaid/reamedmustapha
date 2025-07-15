@@ -1,0 +1,352 @@
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+              <meta charset="UTF-8" />
+              <title>Gestion des Utilisateurs</title>
+              <style>
+                :root {
+                  --bg-color: #1e1e2f;
+                  --card-color: #2a2a3d;
+                  --text-color: #ffffff;
+                  --border-color: #444;
+                  --primary: #4dabf7;
+                  --accent: #ffcb6b;
+                }
+
+                body {
+                  font-family: 'Segoe UI', sans-serif;
+                  background-color: var(--bg-color);
+                  color: var(--text-color);
+                  margin: 0;
+                  padding: 30px;
+                  animation: fadeIn 1s ease;
+                }
+
+                @keyframes fadeIn {
+                  from { opacity: 0; transform: translateY(20px); }
+                  to { opacity: 1; transform: translateY(0); }
+                }
+
+                .section-block {
+                  background-color: var(--card-color);
+                  padding: 30px;
+                  margin-bottom: 40px;
+                  border-radius: 12px;
+                  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+                  animation: fadeIn 0.8s ease;
+                  transition: transform 0.2s ease;
+                }
+
+                .section-block:hover {
+                  transform: scale(1.01);
+                }
+
+                .section-block h2 {
+                  color: var(--accent);
+                  text-align: center;
+                  font-size: 1.8em;
+                  position: relative;
+                  margin-bottom: 25px;
+                }
+
+                .section-block h2::after {
+                  content: "";
+                  display: block;
+                  width: 80px;
+                  margin: 8px auto 0;
+                  border-bottom: 3px solid var(--accent);
+                }
+
+                .filtre {
+                  text-align: center;
+                  margin-bottom: 15px;
+                }
+
+                .filtre select {
+                  padding: 8px 14px;
+                  font-size: 1em;
+                  border-radius: 6px;
+                  border: 1px solid var(--border-color);
+                  background-color: #333;
+                  color: var(--text-color);
+                  cursor: pointer;
+                }
+
+                table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin-top: 10px;
+                  color: var(--text-color);
+                }
+
+                table, th, td {
+                  border: 1px solid var(--border-color);
+                }
+
+                th, td {
+                  padding: 14px;
+                  text-align: left;
+                }
+
+                th {
+                  background-color: #3a3a4d;
+                }
+
+                .action-buttons {
+                  display: flex;
+                  gap: 8px;
+                  flex-wrap: wrap;
+                }
+
+                .action-buttons button {
+                  padding: 8px 14px;
+                  border: none;
+                  border-radius: 6px;
+                  font-weight: bold;
+                  cursor: pointer;
+                  transition: all 0.2s ease;
+                }
+
+                .valider { background-color: #28a745; color: white; }
+                .valider:hover { background-color: #218838; }
+
+                .supprimer { background-color: #dc3545; color: white; }
+                .supprimer:hover { background-color: #c82333; }
+
+                .promouvoir { background-color: #ffc107; color: black; }
+                .promouvoir:hover { background-color: #e0a800; }
+
+                .promouvoir-principal { background-color: #17a2b8; color: white; }
+                .promouvoir-principal:hover { background-color: #138496; }
+
+                .retablir-role { background-color: #6f42c1; color: white; }
+                .retablir-role:hover { background-color: #5936a2; }
+
+                .revenir-admin { background-color: #007bff; color: white; }
+                .revenir-admin:hover { background-color: #0069d9; }
+
+                .statut {
+                  font-weight: bold;
+                  color: #ff6b6b;
+                }
+
+                tr {
+                  transition: background-color 0.2s;
+                }
+
+                tr:hover {
+                  background-color: #2f2f44;
+                }
+              </style>
+            </head>
+            <body>
+
+              <!-- Utilisateurs en attente -->
+              <div class="section-block">
+                <h2>👤 Utilisateurs en attente</h2>
+                <div class="filtre">
+                  <label>Filtrer par rôle :
+                    <select id="filtre-attente">
+                      <option value="">Tous</option>
+                      
+<option>Médecin</option>
+                      <option>Infirmier</option>
+                      <option>Kinésithérapeute</option>
+
+<option>Aide-soignant</option>
+                      
+<option>Manipulateur</option>
+                      <option>Malade</option>
+                    </select>
+                  </label>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Nom</th>
+                      <th>Email</th>
+                      <th>Rôle</th>
+                      <th>Action</th>
+                      <th>Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% utilisateursNonActifs.forEach(u => { %>
+                      <tr data-role="<%= u.role %>">
+                        <td><%= u.nom || '–' %></td>
+                        <td><%= u.email %></td>
+                        <td><%= u.role %></td>
+                        <td class="action-buttons">
+                          <button class="valider" data-id="<%= u._id %>">Valider</button>
+                          <button class="supprimer" data-id="<%= u._id %>">Rejeter</button>
+                        </td>
+                        <td><span class="statut">Inactif</span></td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Utilisateurs actifs -->
+              <div class="section-block">
+                <h2>✅ Utilisateurs actifs</h2>
+                <div class="filtre">
+                  <label>Filtrer par rôle :
+                    <select id="filtre-actifs">
+                      <option value="">Tous</option>
+                      <option>Médecin</option>
+                      <option>Infirmier</option>
+                      <option>Kinésithérapeute</option>
+                      
+<option>Aide-soignant</option>
+                      
+<option>Manipulateur</option>
+                      <option>Malade</option>
+                    </select>
+                  </label>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Nom</th>
+                      <th>Email</th>
+                      <th>Rôle</th>
+                      <% if (utilisateur && utilisateur.role === 'adminprincipal') { %>
+                        <th>Action</th>
+                      <% } %>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% utilisateursActifs.forEach(u => { %>
+                      <tr data-role="<%= u.role %>">
+                        <td><%= u.nom || '–' %></td>
+                        <td><%= u.email %></td>
+                        <td><%= u.role %></td>
+                        <% if (utilisateur && utilisateur.role === 'adminprincipal') { %>
+                          <td class="action-buttons">
+                            <button class="promouvoir" data-id="<%= u._id %>">Promouvoir</button>
+                            <button class="supprimer" data-id="<%= u._id %>">Supprimer</button>
+                          </td>
+                        <% } %>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Administrateurs -->
+              <% if (utilisateur && utilisateur.role === 'adminprincipal') { %>
+                <div class="section-block">
+                  <h2>🛠️ Administrateurs</h2>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Rôle initial</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% administrateurs.forEach(admin => { %>
+                        <tr>
+                          <td><%= admin.nom %></td>
+                          <td><%= admin.email %></td>
+                          <td><%= admin.roleInitial %></td>
+                          <td class="action-buttons">
+                            <button class="retablir-role" data-id="<%= admin._id %>">Revenir au rôle initial</button>
+                            <button class="promouvoir-principal" data-id="<%= admin._id %>">Promouvoir admin principal</button>
+                          </td>
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Administrateurs Principaux -->
+                <div class="section-block">
+                  <h2><span style="color:gold;">👑</span> Administrateurs Principaux</h2>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% adminprincipal.forEach(admin => { %>
+                        <tr>
+                          <td><%= admin.nom %></td>
+                          <td><%= admin.email %></td>
+                          <td><%= admin.role %></td>
+                          <td class="action-buttons">
+                            <button class="revenir-admin" data-id="<%= admin._id %>">Revenir admin</button>
+                          </td>
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+              <% } %>
+
+              <!-- Script JS -->
+              <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                  async function action(url, method) {
+                    const res = await fetch(url, { method });
+                    if (res.ok) location.reload();
+                    else alert('Erreur serveur');
+                  }
+
+                  document.querySelectorAll('.valider').forEach(btn =>
+                    btn.addEventListener('click', () =>
+                      action(`/api/valider/${btn.dataset.id}`, 'POST'))
+                  );
+
+                  document.querySelectorAll('.promouvoir').forEach(btn =>
+                    btn.addEventListener('click', () =>
+                      action(`/api/promouvoir/${btn.dataset.id}`, 'POST'))
+                  );
+
+                  document.querySelectorAll('.promouvoir-principal').forEach(btn =>
+                    btn.addEventListener('click', () =>
+                      action(`/api/promouvoir-principal/${btn.dataset.id}`, 'POST'))
+                  );
+
+                  document.querySelectorAll('.supprimer').forEach(btn =>
+                    btn.addEventListener('click', () => {
+                      if (confirm('Confirmer la suppression ?'))
+                        action(`/api/supprimer/${btn.dataset.id}`, 'DELETE');
+                    })
+                  );
+
+                  document.querySelectorAll('.retablir-role').forEach(btn =>
+                    btn.addEventListener('click', () =>
+                      action(`/api/retablir-role/${btn.dataset.id}`, 'POST'))
+                  );
+
+                  document.querySelectorAll('.revenir-admin').forEach(btn =>
+                    btn.addEventListener('click', () =>
+                      action(`/api/revenir-admin/${btn.dataset.id}`, 'POST'))
+                  );
+
+                  function setupFilter(selectId, tableIndex) {
+                    const select = document.getElementById(selectId);
+                    const table = document.querySelectorAll('table')[tableIndex];
+                    select.addEventListener('change', () => {
+                      const value = select.value;
+                      table.querySelectorAll('tbody tr').forEach(row => {
+                        const role = row.dataset.role;
+                        row.style.display = (value === '' || role === value) ? '' : 'none';
+                      });
+                    });
+                  }
+
+                  setupFilter('filtre-attente', 0);
+                  setupFilter('filtre-actifs', 1);
+                });
+              </script>
+            </body>
+            </html>

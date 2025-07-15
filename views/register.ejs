@@ -1,0 +1,247 @@
+      <!DOCTYPE html>
+      <html lang="fr">
+      <head>
+        <meta charset="UTF-8">
+        <title>Inscription</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #e0f2ff, #b3e0ff);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+          }
+
+          h1 {
+            text-align: center;
+            color: #004a80;
+          }
+
+          form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            animation: slideUp 0.5s ease;
+          }
+
+          input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-size: 16px;
+          }
+
+          input:focus, select:focus {
+            border-color: #3399ff;
+            box-shadow: 0 0 5px #3399ff88;
+            outline: none;
+          }
+
+          button[type="submit"] {
+            background-color: #3399ff;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+          }
+
+          button[type="submit"]:hover {
+            background-color: #007acc;
+          }
+
+          .input-erreur {
+            border: 2px solid red;
+            background-color: #ffe6e6;
+          }
+
+          .password-wrapper {
+            position: relative;
+          }
+
+          .toggle-password {
+            position: absolute;
+            right: -200px;
+            top: 25%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #555;
+          }
+
+          #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+          }
+
+          #code-verification {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #007acc;
+            padding: 20px;
+            z-index: 1000;
+            width: 90%;
+            max-width: 350px;
+            animation: popIn 0.4s ease-out forwards;
+          }
+
+          @keyframes popIn {
+            0% {
+              transform: translate(-50%, -50%) scale(0.8);
+              opacity: 0;
+            }
+            100% {
+              transform: translate(-50%, -50%) scale(1);
+              opacity: 1;
+            }
+          }
+
+          @keyframes slideUp {
+            from {
+              transform: translateY(30px);
+              opacity: 0;
+            }
+            to {
+              transform: translateY(0);
+              opacity: 1;
+            }
+          }
+        </style>
+      </head>
+      <body>
+
+        <form id="registerForm" method="POST" action="/register" onsubmit="return validerFormulaire()">
+          <h1>Inscription</h1>
+
+          <% if (typeof erreur !== 'undefined' && erreur) { %>
+            <p style="color: red; text-align: center;"><%= erreur %></p>
+          <% } %>
+
+          <input type="text" name="nom" placeholder="Nom complet" value="<%= nom || '' %>" required>
+          <input type="email" name="email" placeholder="Email" value="<%= email || '' %>" required>
+
+          <div class="password-wrapper">
+            <input type="password" id="motdepasse" name="motdepasse" placeholder="Mot de passe" required>
+            <button type="button" class="toggle-password" onclick="togglePassword('motdepasse', this)">🙈</button>
+          </div>
+
+          <div class="password-wrapper">
+            <input type="password" id="confirmation" name="confirmation" placeholder="Confirmer le mot de passe" required>
+            <button type="button" class="toggle-password" onclick="togglePassword('confirmation', this)">🙈</button>
+          </div>
+
+          <select name="role" required>
+            <option value="">-- Choisissez votre rôle --</option>
+            <option value="medecin" <%= role === 'medecin' ? 'selected' : '' %>>Médecin</option>
+            <option value="infirmier" <%= role === 'infirmier' ? 'selected' : '' %>>Infirmier</option>
+            <option value="kinesitherapeute" <%= role === 'kinesitherapeute' ? 'selected' : '' %>>Kinésithérapeute</option>
+            <option value="aide-soignant" <%= role === 'aide-soignant' ? 'selected' : '' %>>Aide-soignant</option>
+            <option value="manipulateur" <%= role === 'manipulateur' ? 'selected' : '' %>>Manipulateur</option>
+            <option value="malade" <%= role === 'malade' ? 'selected' : '' %>>Malade</option>
+          </select>
+
+          <input type="hidden" name="codeSaisi" id="codeSaisi">
+          <button type="submit" <%= codeSent ? 'disabled' : '' %>>S'inscrire</button>
+        </form>
+
+        <!-- Overlay & Fenêtre Code -->
+        <div id="overlay"></div>
+        <div id="code-verification">
+          <p style="text-align:center;">Un code vous a été envoyé par email.</p>
+          <input type="text" id="code" placeholder="Entrez le code reçu">
+          <button type="button" onclick="soumettreCode()">Valider</button>
+          <button type="button" onclick="fermerPlaque()">Annuler</button>
+        </div>
+
+        <!-- Message de succès après inscription -->
+        <% if (inscriptionReussie) { %>
+          <div class="success-message" style="position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); background-color: #e6fff2; color: #006644;
+            border: 2px solid #00b36b; padding: 25px; border-radius: 10px; text-align: center;
+            z-index: 2000; font-size: 18px; box-shadow: 0 0 15px rgba(0,0,0,0.2); max-width: 90%;">
+            ✅ INSCRIPTION RÉUSSIE ! VOTRE COPMTE DOIT ETRE APPROUVE PAR UN ADMINISTRATEUR. MERCI
+          </div>
+          <script>
+            setTimeout(() => {
+              window.location.href = '/login';
+            }, 5000);
+          </script>
+        <% } %>
+
+        <!-- Script -->
+        <script>
+          const codeSent = <%= codeSent ? 'true' : 'false' %>;
+
+          function togglePassword(id, btn) {
+            const input = document.getElementById(id);
+            input.type = input.type === "password" ? "text" : "password";
+            btn.textContent = "🙈";
+          }
+
+          function validerFormulaire() {
+            const motdepasse = document.getElementById("motdepasse");
+            const confirmation = document.getElementById("confirmation");
+
+            motdepasse.classList.remove("input-erreur");
+            confirmation.classList.remove("input-erreur");
+
+            if (motdepasse.value !== confirmation.value) {
+              alert("Les mots de passe ne correspondent pas.");
+              motdepasse.classList.add("input-erreur");
+              confirmation.classList.add("input-erreur");
+              return false;
+            }
+            return true;
+          }
+
+          function afficherPlaque() {
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("code-verification").style.display = "block";
+          }
+
+          function fermerPlaque() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("code-verification").style.display = "none";
+          }
+
+          function soumettreCode() {
+            const code = document.getElementById("code").value.trim();
+            if (!code) {
+              alert("Veuillez entrer un code.");
+              return;
+            }
+            document.getElementById("codeSaisi").value = code;
+            document.getElementById("registerForm").submit();
+          }
+
+          window.onload = function () {
+            if (codeSent) {
+              afficherPlaque();
+            }
+          };
+        </script>
+
+      </body>
+      </html>

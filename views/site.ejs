@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin - Actualités</title>
+</head>
+<body>
+  <h1>Ajouter une actualité</h1>
+  <form action="/admin/ajouter-actualite" method="POST">
+    <label>Titre</label>
+    <input type="text" name="titre" required><br>
+
+    <label>Description</label>
+    <input type="text" name="description" required><br>
+
+    <label>Contenu</label>
+    <textarea name="contenu" required></textarea><br>
+
+    <button type="submit">Publier</button>
+  </form>
+
+  <h2>Liste des actualités</h2>
+  <% if (actualites.length === 0) { %>
+    <p>Aucune actualité pour le moment.</p>
+  <% } else { %>
+    <ul>
+      <% actualites.forEach(actu => { %>
+        <li>
+          <strong><%= actu.titre %></strong><br>
+          <small><%= new Date(actu.datePublication).toLocaleDateString('fr-FR') %></small><br>
+          <p><%= actu.contenu %></p>
+          <form action="/admin/supprimer-actualite/<%= actu._id %>" method="POST" style="display:inline;">
+            <button type="submit" onclick="return confirm('Supprimer cette actualité ?')">Supprimer</button>
+          </form>
+        </li>
+        <hr>
+      <% }); %>
+    </ul>
+  <% } %>
+</body>
+</html>
+
