@@ -1,10 +1,11 @@
 const Message = require('../models/message');
+
 const Actualite = require('../models/actualite.model');
 
 // Page d'accueil
 exports.afficherAccueil = async (req, res) => {
   try {
-    const actualites = await Actualite.find().sort({ createdAt: -1 }).limit(4);
+    const actualites = await Actualite.find().sort({ datePublication: -1 }).limit(4);
     res.render('index', {
       utilisateur: req.session.utilisateur,
       actualites,

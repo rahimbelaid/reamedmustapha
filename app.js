@@ -5,7 +5,8 @@ const path = require('path');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
-const mongoose = require('./config/db');
+const mongoose
+  = require('./config/db');
 const cron = require('node-cron'); // 🔁 Cron pour exécuter receiveMail
 const { exec } = require('child_process');
 

@@ -23,6 +23,7 @@
     "imap-simple": "^1.6.3",
     "jsonwebtoken": "^9.0.2",
     "mailparser": "^3.7.4",
+    "mongodb": "^6.17.0",
     "mongoose": "^8.16.3",
     "node": "^24.4.0",
     "node-cron": "^4.2.1",
