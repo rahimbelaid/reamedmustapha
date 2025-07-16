@@ -1,5 +1,5 @@
 // controllers/authController.js
-
+require('dotenv').config()
 const Utilisateur = require('../models/utilisateur');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
