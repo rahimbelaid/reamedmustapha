@@ -80,6 +80,7 @@ app.use('/messagerie', messagerieRoutes);
 app.use(adminRoutes);
 app.use('/admin', siteRoutes);
 app.use('/', resetPasswordRoutes);
+app.use('/uploads', express.static('uploads'));
 
 // ✅ Middleware pour gérer les erreurs 404
 app.use((req, res) => {
