@@ -1,6 +1,6 @@
 // controllers/authController.js
 
-const Utilisateur = require('../models/utilisateur.model');
+const Utilisateur = require('../models/utilisateur');
 const bcrypt = require('bcrypt');
 
 exports.resetPassword = async (req, res) => {
