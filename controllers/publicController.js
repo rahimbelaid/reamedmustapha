@@ -1,23 +1,28 @@
 const Message = require('../models/message');
-
 const Actualite = require('../models/actualite.model');
+const Carrousel = require('../models/carrousel.model'); // ✅ Assure-toi que ce modèle existe
 
 // Page d'accueil
 exports.afficherAccueil = async (req, res) => {
   try {
     const actualites = await Actualite.find().sort({ datePublication: -1 }).limit(4);
+    const imagesCarrousel = await Carrousel.find(); // ✅ Charge les images du carrousel
+
     res.render('index', {
       utilisateur: req.session.utilisateur,
       actualites,
+      imagesCarrousel, // ✅ Envoie à EJS
     });
   } catch (err) {
     console.error(err);
     res.render('index', {
       utilisateur: req.session.utilisateur,
       actualites: [],
+      imagesCarrousel: [], // ✅ Toujours envoyer même en cas d'erreur
     });
   }
 };
+
 
 // Page de contact (GET)
 exports.afficherContact = (req, res) => {

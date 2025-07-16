@@ -5,9 +5,10 @@
 </head>
 <body>
   <h1>Ajouter une image</h1>
-  <form action="/upload" method="POST" enctype="multipart/form-data">
-    <input type="file" name="image" required>
-    <button type="submit">Envoyer</button>
+  <form action="/admin/carrousel" method="POST" enctype="multipart/form-data">
+    <label>Ajouter une image au carrousel :</label><br>
+    <input type="file" name="image" accept="image/*" required>
+    <button type="submit">Uploader</button>
   </form>
 
   <h2>Images existantes</h2>
@@ -17,7 +18,7 @@
         <% imagesCarrousel.forEach((img) => { %>
           <div>
             <img src="/uploads/<%= img.url %>" alt="Image du carrousel" style="width:200px;">
-            <a href="/supprimer/<%= img._id %>">🗑 Supprimer</a>
+            <a href="/admin/supprimer/<%= img._id %>">🗑 Supprimer</a>
           </div>
         <% }) %>
       <% } else { %>
@@ -26,7 +27,7 @@
     </div>
   </section>
 
-  <h2>Ajouter une actualité</h2>
+  <h3>Ajouter une actualité</h3>
   <form action="/admin/ajouter-actualite" method="POST">
     <label>Titre</label>
     <input type="text" name="titre" required><br>
@@ -40,7 +41,7 @@
     <button type="submit">Publier</button>
   </form>
 
-  <h2>Liste des actualités</h2>
+  <h4>Liste des actualités</h4>
   <% if (actualites.length === 0) { %>
     <p>Aucune actualité pour le moment.</p>
   <% } else { %>

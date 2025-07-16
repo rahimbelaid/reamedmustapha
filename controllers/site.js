@@ -1,13 +1,16 @@
-// controllers/site.js
+const Carrousel = require('../models/carrousel.model');
 const Actualite = require('../models/actualite.model');
 
-// Afficher la page admin avec les actualités existantes
+// Afficher la page admin avec actualités et images carrousel
 exports.renderAdminPage = async (req, res) => {
   try {
     const actualites = await Actualite.find().sort({ createdAt: -1 });
+    const imagesCarrousel = await Carrousel.find(); // récupération des images
+
     res.render('site', {
+      utilisateur: req.session.utilisateur || null,
       actualites,
-      user: req.session.utilisateur
+      imagesCarrousel,
     });
   } catch (err) {
     console.error(err);

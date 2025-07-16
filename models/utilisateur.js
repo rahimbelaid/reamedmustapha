@@ -16,12 +16,19 @@ const utilisateurSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'adminprincipal', 'superadmin', 'medecin', 'infirmier', 'kinesitherapeute', 'aide-soignant', 'manipulateur', 'malade'],
+    enum: [
+      'admin', 'adminprincipal', 'superadmin',
+      'medecin', 'infirmier', 'kinesitherapeute',
+      'aide-soignant', 'manipulateur', 'malade'
+    ],
     required: true
   },
   roleInitial: {
     type: String,
-    enum: ['medecin', 'infirmier', 'kinesitherapeute', 'aide-soignant', 'manipulateur', 'malade', null],
+    enum: [
+      'medecin', 'infirmier', 'kinesitherapeute',
+      'aide-soignant', 'manipulateur', 'malade', null
+    ],
     default: null
   },
   actif: {
@@ -32,15 +39,17 @@ const utilisateurSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  codeVerification: {
-    type: String
-  },
-  verificationExpire: {
-    type: Date
-  }
+
+  // ✅ Pour vérification de l'inscription
+  codeVerification: { type: String },
+  verificationExpire: { type: Date },
+
+  // ✅ Pour réinitialisation de mot de passe
+  resetPasswordCode: { type: String },
+  resetPasswordExpire: { type: Date }
+
 }, { timestamps: true });
 
-// ✅ Hook pour définir automatiquement le rôle initial à la création
 utilisateurSchema.pre('save', function (next) {
   if (this.isNew && !this.roleInitial) {
     this.roleInitial = this.role;
@@ -49,4 +58,3 @@ utilisateurSchema.pre('save', function (next) {
 });
 
 module.exports = mongoose.model('Utilisateur', utilisateurSchema);
-

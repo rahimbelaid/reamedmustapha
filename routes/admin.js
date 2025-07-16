@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Log = require('../models/log');
+const path = require('path');
+const fs = require('fs');
 const Message = require('../models/message');
+const upload = require('../middlewares/upload')
+const Carrousel = require('../models/carrousel.model');
 const Utilisateur = require('../models/utilisateur');
 const { estadmin, estadminprincipal } = require('../middlewares/authMiddleware');
 const { estSuperAdmin } = require('../middlewares/authMiddleware');
@@ -168,5 +172,45 @@ router.post('/logs/supprimer-multiple', estadmin, async (req, res) => {
 router.get('/site', estadmin, siteController.renderAdminPage);
 router.post('/admin/ajouter-actualite', siteController.addActualite);
 router.post('/admin/supprimer-actualite/:id', siteController.deleteActualite);
+
+// Form POST pour uploader une image dans le carrousel
+router.post('/admin/carrousel', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send('Aucun fichier envoyé');
+    }
+
+    const nouvelleImage = new Carrousel({
+      url: req.file.filename, // Ne mets pas le chemin complet ici
+    });
+
+    await nouvelleImage.save();
+
+    res.redirect('/admin'); // Ou autre page
+  } catch (err) {
+    console.error('Erreur upload carrousel :', err);
+    res.status(500).send('Erreur serveur');
+  }
+});
+router.get('/admin/supprimer/:id', async (req, res) => {
+  try {
+    const image = await Carrousel.findById(req.params.id);
+    if (!image) {
+      return res.status(404).send("Image non trouvée.");
+    }
+
+    const imagePath = path.join(__dirname, '../public/uploads', image.url);
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
+    }
+
+    await Carrousel.findByIdAndDelete(req.params.id);
+    res.redirect('/admin/site');
+  } catch (err) {
+    console.error("Erreur suppression image carrousel :", err);
+    res.status(500).send("Erreur serveur.");
+  }
+});
+
 
 module.exports = router;

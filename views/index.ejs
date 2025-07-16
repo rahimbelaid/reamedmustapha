@@ -10,7 +10,7 @@
         background-color: #f5f5f5;
         color: #333;
       }
-    
+
 
       /* Header and Footer */
       header, footer {
@@ -103,33 +103,32 @@
         text-align: center;
       }
 
-      /* Carousel */
-      .carousel-container {
-        width: 90%;
-        max-width: 1000px;
-        height: 450px;
-        margin: 30px auto;
-        overflow: hidden;
-        position: relative;
-        border-radius: 12px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        background-color: #000;
-      }
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
 
-      .carousel-slides {
-        display: flex;
-        transition: transform 1s ease;
-        height: 100%;
-      }
+    .carousel-slides {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
 
-      .carousel-slides img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        background-color: black;
-        flex-shrink: 0;
-      }
+    .carousel-slides > div {
+      flex: 0 0 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
+    .carousel-slides img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 80vh; /* tu peux ajuster cette valeur selon ta préférence */
+      display: block;
+      margin: 0 auto;
+    }
       .overlay {
         position: absolute;
         top: 50%;
@@ -433,20 +432,21 @@
         Bienvenue <%= utilisateur.nom %>
       <% } %>
     </div>
-    <div class="auth-buttons">
-      <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal' || utilisateur.role === 'superadmin')) { %>
-        <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
-      <% } %>
-      <% if (!utilisateur) { %>
-        <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
-        <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
-      <% } else { %>
-        <form action="/logout" method="POST" style="display: inline;">
-          <button type="submit" class="btn-auth">Déconnexion</button>
-        </form>
-      <% } %>
+        <div class="auth-buttons">
+          <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal' || utilisateur.role === 'superadmin')) { %>
+            <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
+          <% } %>
+          <% if (!utilisateur) { %>
+            <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
+            <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
+          <% } else { %>
+            <button class="btn-auth" onclick="window.location.href='/reset-password'">Password</button>
+            <form action="/logout" method="POST" style="display: inline;">
+              <button type="submit" class="btn-auth">Déconnexion</button>
+            </form>
+          <% } %>
+        </div>
     </div>
-  </div>
 
   <!-- === EN-TÊTE === -->
               <header>
@@ -523,17 +523,19 @@ logogauche = 'logogauche2.png';
   <!-- === CONTENU PRINCIPAL === -->
                   <main>
                     <section class="carousel-container">
-                      <div class="carousel-slides" id="carouselSlides">
-                        <% if (imagesCarrousel && imagesCarrousel.length > 0) { %>
-                          <% imagesCarrousel.forEach((img) => { %>
-                            <div>
-                              <img src="/uploads/<%= img.url %>" alt="Image du carrousel" style="width:200px;">
+                            <div class="carousel-container">
+                              <div class="carousel-slides">
+                                <% if (imagesCarrousel && imagesCarrousel.length > 0) { %>
+                                  <% imagesCarrousel.forEach(function(img) { %>
+                                    <div>
+                                      <img src="/uploads/<%= img.url %>" alt="Image du carrousel">
+                                    </div>
+                                  <% }); %>
+                                <% } else { %>
+                                  <p>Aucune image.</p>
+                                <% } %>
+                              </div>
                             </div>
-                          <% }) %>
-                        <% } else { %>
-                          <p>Aucune image.</p>
-                        <% } %>
-                      </div>
                       <% if (!utilisateur) { %>
                         <div class="overlay">
                           <h2>Bienvenue sur notre site.</h2>
@@ -572,22 +574,14 @@ logogauche = 'logogauche2.png';
                   </div>
                   <script>
                     // Carousel
-                    let currentIndex = 0;
-                    const slides = document.getElementById('carouselSlides');
-                    const totalSlides = slides.children.length;
+                    let index = 0;
+                    const slides = document.querySelector('.carousel-slides');
+                    const total = slides.children.length;
 
-                    function showSlide(index) {
+                    setInterval(() => {
+                      index = (index + 1) % total;
                       slides.style.transform = `translateX(-${index * 100}%)`;
-                    }
-
-                    function nextSlide() {
-                      currentIndex = (currentIndex + 1) % totalSlides;
-                      showSlide(currentIndex);
-                    }
-
-                    // Affiche la première image et lance le carrousel
-                    showSlide(currentIndex);
-                    setInterval(nextSlide, 5000);
+                    }, 3000); // Change toutes les 3 secondes
 
                     // Toggle pour les actualités
                     function toggleContent(index) {

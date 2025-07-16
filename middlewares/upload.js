@@ -1,15 +1,21 @@
+// middleware/upload.js
+
 const multer = require('multer');
 const path = require('path');
 
-// Dossier de destination
+// Configuration du stockage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/uploads/');
+    cb(null, 'public/uploads'); // dossier de destination
   },
   filename: (req, file, cb) => {
-    const uniqueName = Date.now() + '-' + file.originalname;
+    // nom unique pour éviter les conflits
+    const uniqueName = Date.now() + path.extname(file.originalname);
     cb(null, uniqueName);
   }
 });
 
-module.exports = multer({ storage });
+// Export du middleware
+const upload = multer({ storage });
+
+module.exports = upload;

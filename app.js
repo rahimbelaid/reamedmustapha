@@ -67,6 +67,8 @@ const publicRoutes = require('./routes/public');
 const apiRoutes = require('./routes/api');
 const contactRoutes = require('./routes/contact');
 const messagerieRoutes = require('./routes/messagerie');
+const siteRoutes = require('./routes/site');
+const resetPasswordRoutes = require('./routes/resetPassword');
 
 // ✅ Utilisation des routes
 app.use(authRoutes);
@@ -76,6 +78,8 @@ app.use(publicRoutes);
 app.use('/api', apiRoutes);
 app.use('/messagerie', messagerieRoutes);
 app.use(adminRoutes);
+app.use('/admin', siteRoutes);
+app.use('/', resetPasswordRoutes);
 
 // ✅ Middleware pour gérer les erreurs 404
 app.use((req, res) => {
