@@ -8,7 +8,7 @@ dotenv.config();
 const Utilisateur = require('../models/utilisateur');
 const Log = require('../models/log');
 const { envoyerCode } = require('../utils/mailer');
-
+const authController = require('../controllers/authController');
 // GET /login
 router.get('/login', (req, res) => {
   const error = req.flash('error');
@@ -73,11 +73,8 @@ router.post('/login', async (req, res) => {
 });
 
 // POST /reset-password
-router.post('/reset-password', async (req, res) => {
-  const { email } = req.body;
-
-  try {
-    const utilisateur = await Utilisateur.findOne({ email });
+      router.post('/reset-password', authController.resetPassword);
+;
 
     // Toujours répondre de la même façon pour éviter les fuites
     if (!utilisateur) {
