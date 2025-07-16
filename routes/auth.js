@@ -9,6 +9,7 @@ const Utilisateur = require('../models/utilisateur');
 const Log = require('../models/log');
 const { envoyerCode } = require('../utils/mailer');
 const authController = require('../controllers/authController');
+
 // GET /login
 router.get('/login', (req, res) => {
   const error = req.flash('error');
@@ -73,49 +74,7 @@ router.post('/login', async (req, res) => {
 });
 
 // POST /reset-password
-      router.post('/reset-password', authController.resetPassword);
-;
-
-    // Toujours répondre de la même façon pour éviter les fuites
-    if (!utilisateur) {
-      return res.status(200).send('Si un compte existe, un mail a été envoyé.');
-    }
-
-    // Générer un mot de passe temporaire (8 caractères alphanumériques)
-    const tempPassword = Math.random().toString(36).slice(-8);
-
-    // Hasher et enregistrer ce mot de passe temporaire
-    utilisateur.motdepasse = await bcrypt.hash(tempPassword, 10);
-    await utilisateur.save();
-
-    // Configuration du transporteur e-mail
-    const transporter = require('nodemailer').createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-    });
-
-    const mailOptions = {
-      from: process.env.EMAIL_FROM,
-      to: utilisateur.email,
-      subject: 'Votre nouveau mot de passe temporaire',
-      html: `
-        <p>Bonjour,</p>
-        <p>Voici votre nouveau mot de passe temporaire :</p>
-        <h3>${tempPassword}</h3>
-        <p>Nous vous recommandons de le changer dès votre prochaine connexion.</p>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-    res.status(200).send('Si un compte existe, un mail a été envoyé.');
-  } catch (err) {
-    console.error('Erreur lors de la réinitialisation :', err);
-    res.status(500).send("Une erreur est survenue.");
-  }
-});
+router.post('/reset-password', authController.resetPassword);
 
 // GET /logout
 router.get('/logout', async (req, res) => {
