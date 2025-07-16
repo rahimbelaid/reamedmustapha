@@ -1,31 +1,27 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 dotenv.config();
+
 const Utilisateur = require('../models/utilisateur');
 const Log = require('../models/log');
 const { envoyerCode } = require('../utils/mailer');
 const authController = require('../controllers/authController');
 
-// GET /login
+// --- GET /login
 router.get('/login', (req, res) => {
   const error = req.flash('error');
   const success = req.flash('success');
 
   res.render('login', {
     title: 'Connexion - Service de Réanimation',
-    messages: {
-      error,
-      success
-    },
+    messages: { error, success },
     utilisateur: req.utilisateur || null
   });
 });
 
-// POST /login
+// --- POST /login
 router.post('/login', async (req, res) => {
   const { email, motdepasse } = req.body;
 
@@ -34,10 +30,11 @@ router.post('/login', async (req, res) => {
     req.flash('error', 'Utilisateur inconnu.');
     return res.redirect('/login');
   }
+
   if (!utilisateur.actif) {
     return res.render('login', {
       title: 'Connexion - Service de Réanimation',
-      error: 'Votre compte est inactif , veuillez contacter un administrateur. Merci ',
+      error: 'Votre compte est inactif , veuillez contacter un administrateur.',
       success: null,
       utilisateur: null
     });
@@ -57,7 +54,7 @@ router.post('/login', async (req, res) => {
   req.session.utilisateur = utilisateur;
   req.session.save(async err => {
     if (err) {
-      console.error('❌ Erreur de sauvegarde session:', err);
+      console.error('❌ Erreur de session:', err);
       req.flash('error', 'Erreur de session');
       return res.redirect('/login');
     }
@@ -73,10 +70,13 @@ router.post('/login', async (req, res) => {
   });
 });
 
-// POST /reset-password
+// --- POST /demander-reset : Envoie le code par email
+router.post('/demander-reset', authController.resetPasswordRequest);
+
+// --- POST /reset-password : Confirme le code + change le mot de passe
 router.post('/reset-password', authController.resetPassword);
 
-// GET /logout
+// --- GET /logout
 router.get('/logout', async (req, res) => {
   const utilisateur = req.session.utilisateur;
   if (utilisateur) {
@@ -90,14 +90,14 @@ router.get('/logout', async (req, res) => {
 
   req.session.destroy(err => {
     if (err) {
-      console.error('Erreur lors de la destruction de la session:', err);
+      console.error('Erreur de session:', err);
       return res.redirect('/admin');
     }
     res.redirect('/login');
   });
 });
 
-// POST /logout
+// --- POST /logout
 router.post('/logout', async (req, res) => {
   const utilisateur = req.session.utilisateur;
   if (utilisateur) {
@@ -111,14 +111,14 @@ router.post('/logout', async (req, res) => {
 
   req.session.destroy(err => {
     if (err) {
-      console.error('Erreur lors de la destruction de la session:', err);
+      console.error('Erreur de session:', err);
       return res.redirect('/admin');
     }
     res.redirect('/login');
   });
 });
 
-// GET /register
+// --- GET /register
 router.get('/register', (req, res) => {
   res.render('register', {
     nom: '',
@@ -130,7 +130,7 @@ router.get('/register', (req, res) => {
   });
 });
 
-// POST /register
+// --- POST /register
 router.post('/register', async (req, res) => {
   const { nom, email, motdepasse, role, codeSaisi } = req.body;
 
