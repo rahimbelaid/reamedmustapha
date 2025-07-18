@@ -1,21 +1,19 @@
 // middleware/upload.js
 
 const multer = require('multer');
-const path = require('path');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const { cloudinary } = require('../config/cloudinary'); // on suppose que cloudinary est configuré dans ce fichier
 
-// Configuration du stockage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/uploads'); // dossier de destination
+// Configuration du stockage Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'carousel', // 📂 dossier Cloudinary
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 1200, height: 800, crop: 'limit' }],
   },
-  filename: (req, file, cb) => {
-    // nom unique pour éviter les conflits
-    const uniqueName = Date.now() + path.extname(file.originalname);
-    cb(null, uniqueName);
-  }
 });
 
-// Export du middleware
 const upload = multer({ storage });
 
 module.exports = upload;

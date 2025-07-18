@@ -522,20 +522,20 @@ logogauche = 'logogauche2.png';
 
   <!-- === CONTENU PRINCIPAL === -->
                   <main>
-                    <section class="carousel-container">
-                            <div class="carousel-container">
-                              <div class="carousel-slides">
-                                <% if (imagesCarrousel && imagesCarrousel.length > 0) { %>
-                                  <% imagesCarrousel.forEach(function(img) { %>
-                                    <div>
-                                      <img src="/uploads/<%= img.url %>" alt="Image du carrousel">
-                                    </div>
-                                  <% }); %>
-                                <% } else { %>
-                                  <p>Aucune image.</p>
-                                <% } %>
-                              </div>
-                            </div>
+  <section class="carousel-container">
+    <div class="carousel-container">
+      <div class="carousel-slides">
+        <% if (imagesCarrousel && imagesCarrousel.length > 0) { %>
+          <% imagesCarrousel.forEach(function(img) { %>
+            <div class="carousel-slide">
+              <img src="<%= img.url %>" alt="Image du carrousel" style="max-width: 100%; height: auto;">
+            </div>
+          <% }); %>
+        <% } else { %>
+          <p>Aucune image.</p>
+        <% } %>
+      </div>
+    </div>
                       <% if (!utilisateur) { %>
                         <div class="overlay">
                           <h2>Bienvenue sur notre site.</h2>

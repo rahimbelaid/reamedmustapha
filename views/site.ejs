@@ -1,64 +1,67 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Admin - Actualités</title>
-</head>
-<body>
-  <h1>Ajouter une image</h1>
-  <form action="/admin/carrousel" method="POST" enctype="multipart/form-data">
-    <label>Ajouter une image au carrousel :</label><br>
-    <input type="file" name="image" accept="image/*" required>
-    <button type="submit">Uploader</button>
-  </form>
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Admin - Actualités</title>
+    </head>
+    <body>
 
-  <h2>Images existantes</h2>
-  <section class="carousel-container">
-    <div class="carousel-slides" id="carouselSlides">
-      <% if (imagesCarrousel && imagesCarrousel.length > 0) { %>
-        <% imagesCarrousel.forEach((img) => { %>
-          <div>
-            <img src="/uploads/<%= img.url %>" alt="Image du carrousel" style="width:200px;">
-            <a href="/admin/supprimer/<%= img._id %>">🗑 Supprimer</a>
-          </div>
-        <% }) %>
+      <h1>Ajouter une image</h1>
+      <!-- ✅ Formulaire d'upload vers Cloudinary -->
+      <form action="/admin/carrousel" method="POST" enctype="multipart/form-data">
+        <label>Ajouter une image au carrousel :</label><br>
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Uploader</button>
+      </form>
+
+      <h2>Images existantes</h2>
+      <section class="carousel-container">
+        <div class="carousel-slides" id="carouselSlides">
+          <% if (imagesCarrousel && imagesCarrousel.length > 0) { %>
+            <% imagesCarrousel.forEach((img) => { %>
+              <div>
+                <!-- ✅ Utilisation de l'URL Cloudinary -->
+                <img src="<%= img.url %>" alt="Image du carrousel" style="width:200px;">
+                <a href="/admin/supprimer/<%= img._id %>">🗑 Supprimer</a>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p>Aucune image.</p>
+          <% } %>
+        </div>
+      </section>
+
+      <h3>Ajouter une actualité</h3>
+      <form action="/admin/ajouter-actualite" method="POST">
+        <label>Titre</label>
+        <input type="text" name="titre" required><br>
+
+        <label>Description</label>
+        <input type="text" name="description" required><br>
+
+        <label>Contenu</label>
+        <textarea name="contenu" required></textarea><br>
+
+        <button type="submit">Publier</button>
+      </form>
+
+      <h4>Liste des actualités</h4>
+      <% if (actualites.length === 0) { %>
+        <p>Aucune actualité pour le moment.</p>
       <% } else { %>
-        <p>Aucune image.</p>
+        <ul>
+          <% actualites.forEach(actu => { %>
+            <li>
+              <strong><%= actu.titre %></strong><br>
+              <small><%= new Date(actu.datePublication).toLocaleDateString('fr-FR') %></small><br>
+              <p><%= actu.contenu %></p>
+              <form action="/admin/supprimer-actualite/<%= actu._id %>" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Supprimer cette actualité ?')">Supprimer</button>
+              </form>
+            </li>
+            <hr>
+          <% }); %>
+        </ul>
       <% } %>
-    </div>
-  </section>
 
-  <h3>Ajouter une actualité</h3>
-  <form action="/admin/ajouter-actualite" method="POST">
-    <label>Titre</label>
-    <input type="text" name="titre" required><br>
-
-    <label>Description</label>
-    <input type="text" name="description" required><br>
-
-    <label>Contenu</label>
-    <textarea name="contenu" required></textarea><br>
-
-    <button type="submit">Publier</button>
-  </form>
-
-  <h4>Liste des actualités</h4>
-  <% if (actualites.length === 0) { %>
-    <p>Aucune actualité pour le moment.</p>
-  <% } else { %>
-    <ul>
-      <% actualites.forEach(actu => { %>
-        <li>
-          <strong><%= actu.titre %></strong><br>
-          <small><%= new Date(actu.datePublication).toLocaleDateString('fr-FR') %></small><br>
-          <p><%= actu.contenu %></p>
-          <form action="/admin/supprimer-actualite/<%= actu._id %>" method="POST" style="display:inline;">
-            <button type="submit" onclick="return confirm('Supprimer cette actualité ?')">Supprimer</button>
-          </form>
-        </li>
-        <hr>
-      <% }); %>
-    </ul>
-  <% } %>
-</body>
-</html>
-
+    </body>
+    </html>
