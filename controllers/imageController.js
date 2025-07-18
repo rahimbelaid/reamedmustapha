@@ -28,7 +28,10 @@ exports.afficherSite = async (req, res) => {
 // Ajouter une image
 exports.ajouterImage = async (req, res) => {
   try {
-    const image = new Carrousel({ url: req.file.filename }); // nouveau modèle
+    const image = new Carrousel({
+      url: req.file.path, // ✅ L’URL Cloudinary complète
+      public_id: req.file.filename // optionnel mais utile si tu veux supprimer après
+    });
     await image.save();
     res.redirect('/admin/site');
   } catch (err) {
