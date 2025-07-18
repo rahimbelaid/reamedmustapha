@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middlewares/upload');
-const Image = require('../models/Image');
+const Image = require('../models/carrousel.model');
 
 // Formulaire upload (GET)
 router.get('/upload-image', (req, res) => {
