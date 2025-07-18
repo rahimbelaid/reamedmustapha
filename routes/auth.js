@@ -69,11 +69,12 @@ router.post('/login', async (req, res) => {
     return res.redirect('/');
   });
 });
+// Affiche le formulaire de réinitialisation de mot de passe
+router.get('/reset-password', (req, res) => {
+  res.render('reset-password');
+});
 
-// --- POST /demander-reset : Envoie le code par email
-router.post('/demander-reset', authController.resetPasswordRequest);
-
-// --- POST /reset-password : Confirme le code + change le mot de passe
+router.post('/send-reset-code', authController.sendResetCode);
 router.post('/reset-password', authController.resetPassword);
 
 // --- GET /logout
