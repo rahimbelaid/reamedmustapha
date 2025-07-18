@@ -2,11 +2,11 @@ const Utilisateur = require('./utilisateur'); // ← Assure-toi que c'est bien l
 
 // Trouver un utilisateur par email
 exports.findUserByEmail = async (email) => {
-  return await Utilisateur.findOne({ email });
+  return Utilisateur.findOne({ email });
 };
 
 // Mettre à jour le mot de passe d’un utilisateur par son ID
-exports.updateUserPassword = async (id, hashedPassword) => {
+exports.updateUtilisateurPassword = async (id, hashedPassword) => {
   return await Utilisateur.findByIdAndUpdate(
     id,
     { motdepasse: hashedPassword },
