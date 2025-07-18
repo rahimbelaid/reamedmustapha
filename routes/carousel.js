@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const upload = require('../middleware/upload');
+const upload = require('../middlewares/upload');
 const Image = require('../models/Image');
 
 // Formulaire upload (GET)
