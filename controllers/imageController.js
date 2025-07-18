@@ -1,5 +1,6 @@
 // imageController.js
 const Carrousel = require('../models/carrousel.model'); // au lieu de Image
+const Actualite = require('../models/actualite.model');
 const path = require('path');
 const fs = require('fs');
 
@@ -17,7 +18,8 @@ exports.afficherAccueil = async (req, res) => {
 exports.afficherSite = async (req, res) => {
   try {
     const imagesCarrousel = await Carrousel.find().sort({ createdAt: -1 });
-    res.render('site', { imagesCarrousel });
+    const actualites = await Actualite.find().sort({ datePublication: -1 }); // ou createdAt si tu préfères
+    res.render('site', { imagesCarrousel, actualites });
   } catch (error) {
     res.status(500).send('Erreur lors du chargement de la page d\'administration.');
   }
