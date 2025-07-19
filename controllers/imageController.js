@@ -1,59 +1,63 @@
-// imageController.js
-const Carrousel = require('../models/carrousel.model'); // au lieu de Image
+const Carousel = require('../models/carrousel.model');
 const Actualite = require('../models/actualite.model');
 const path = require('path');
 const fs = require('fs');
+const { cloudinary } = require('../config/cloudinary'); // config Cloudinary
 
-// Afficher page d’accueil
+// ✅ Afficher page d’accueil
 exports.afficherAccueil = async (req, res) => {
   try {
-    const imagesCarrousel = await Carrousel.find(); // Carrousel au lieu de Image
-    res.render('index', { imagesCarrousel });
+    const imagesCarousel = await Carousel.find();
+    res.render('index', { imagesCarousel });
   } catch (error) {
-    res.status(500).send('Erreur lors du chargement de la page d\'accueil.');
+    res.status(500).send("Erreur lors du chargement de la page d'accueil.");
   }
 };
 
-// Afficher page admin
+// ✅ Afficher page admin
 exports.afficherSite = async (req, res) => {
   try {
-    const imagesCarrousel = await Carrousel.find().sort({ createdAt: -1 });
-    const actualites = await Actualite.find().sort({ datePublication: -1 }); // ou createdAt si tu préfères
-    res.render('site', { imagesCarrousel, actualites });
+    const imagesCarousel = await Carousel.find().sort({ createdAt: -1 });
+    const actualites = await Actualite.find().sort({ datePublication: -1 });
+    res.render('site', { imagesCarousel, actualites });
   } catch (error) {
-    res.status(500).send('Erreur lors du chargement de la page d\'administration.');
+    res.status(500).send("Erreur lors du chargement de la page d'administration.");
   }
 };
 
-// Ajouter une image
+// ✅ Ajouter une image (vers Cloudinary)
 exports.ajouterImage = async (req, res) => {
   try {
-    const image = new Carrousel({
-      url: req.file.path, // ✅ L’URL Cloudinary complète
-      public_id: req.file.filename // optionnel mais utile si tu veux supprimer après
+    const image = new Carousel({
+      url: req.file.path, // URL complète Cloudinary
+      public_id: req.file.filename // utile pour suppression
     });
     await image.save();
     res.redirect('/admin/site');
   } catch (err) {
-    res.status(500).send('Erreur lors de l\'upload.');
+    res.status(500).send("Erreur lors de l'upload.");
   }
 };
 
-// Supprimer une image
+// ✅ Supprimer une image (Cloudinary + Mongo)
 exports.supprimerImage = async (req, res) => {
   try {
-    const image = await Carrousel.findById(req.params.id);
+    const image = await Carousel.findById(req.params.id);
     if (!image) {
       return res.status(404).send("Image non trouvée.");
     }
-    const imagePath = path.join(__dirname, '../public/uploads', image.url);
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
+
+    // Supprimer de Cloudinary si public_id existe
+    if (image.public_id) {
+      await cloudinary.uploader.destroy(image.public_id);
     }
-    await Carrousel.findByIdAndDelete(req.params.id);
+
+    // Supprimer de MongoDB
+    await Carousel.findByIdAndDelete(req.params.id);
+
     res.redirect('/admin/site');
   } catch (err) {
-    console.error("Erreur suppression :", err);
-    res.status(500).send('Erreur suppression');
+    console.error("Erreur lors de la suppression :", err);
+    res.status(500).send("Erreur lors de la suppression.");
   }
-};
+}

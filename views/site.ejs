@@ -7,7 +7,7 @@
 
       <h1>Ajouter une image</h1>
       <!-- ✅ Formulaire d'upload vers Cloudinary -->
-      <form action="/admin/carrousel" method="POST" enctype="multipart/form-data">
+        <form action="/admin/upload" method="POST" enctype="multipart/form-data">
         <label>Ajouter une image au carrousel :</label><br>
         <input type="file" name="image" accept="image/*" required>
         <button type="submit">Uploader</button>
@@ -16,11 +16,11 @@
       <h2>Images existantes</h2>
       <section class="carousel-container">
         <div class="carousel-slides" id="carouselSlides">
-          <% if (imagesCarrousel && imagesCarrousel.length > 0) { %>
-            <% imagesCarrousel.forEach((img) => { %>
+          <% if (imagesCarousel && imagesCarousel.length > 0) { %>
+            <% imagesCarousel.forEach((img) => { %>
               <div>
                 <!-- ✅ Utilisation de l'URL Cloudinary -->
-                <img src="<%= img.url %>" alt="Image du carrousel" style="width:200px;">
+                <img src="<%= img.url %>" alt="Image du carousel" style="width:200px;">
                 <a href="/admin/supprimer/<%= img._id %>">🗑 Supprimer</a>
               </div>
             <% }) %>
