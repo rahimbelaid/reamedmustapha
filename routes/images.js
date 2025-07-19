@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/upload');
-const Image = require('../models/Image');
+const Image = require('../models/carrousel.model');
 
 // Route d’upload
 router.post('/upload-image', upload.single('image'), async (req, res) => {
