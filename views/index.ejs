@@ -608,6 +608,11 @@ logogauche = 'logogauche2.png';
                       const div = document.getElementById(`contenu-${index}`);
                       div.style.display = (div.style.display === "none" || div.style.display === "") ? "block" : "none";
                     }
+                    // 🔔 Afficher/Masquer les notifications
+                    function toggleNotifications() {
+                      const box = document.getElementById('notificationBox');
+                      box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
+                    }
                   </script>
 
 </body>
