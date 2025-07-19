@@ -433,12 +433,13 @@
       <% } %>
     </div>
         <div class="auth-buttons">
+          <% if (utilisateur) { %>
+            <!-- 🔔 Notifications -->
+            <button class="btn-auth" onclick="toggleNotifications()">🔔 Notifications</button>
+          <% } %>
           <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal' || utilisateur.role === 'superadmin')) { %>
             <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
           <% } %>
-            <% if (utilisateur) { %>
-              <button class="btn-auth" onclick="toggleNotifications()">🔔 Notifications</button>
-            <% } %>
           <% if (!utilisateur) { %>
             <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
             <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
@@ -449,6 +450,22 @@
             </form>
           <% } %>
         </div>
+
+        <!-- 🔔 Notification Box -->
+        <% if (utilisateur) { %>
+          <div id="notificationBox" style="display: none; position: absolute; right: 20px; top: 60px; background-color: white; color: black; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 9999; width: 300px; max-height: 400px; overflow-y: auto;">
+            <% if (notifications && notifications.length > 0) { %>
+              <% notifications.forEach(function(n) { %>
+                <div style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="window.location.href='<%= n.lien %>'">
+                  <strong><%= n.titre %></strong>
+                  <p style="margin: 5px 0;"><%= n.message %></p>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <div style="padding: 10px; text-align: center;">Aucune notification</div>
+            <% } %>
+          </div>
+        <% } %>
     </div>
 
   <!-- === EN-TÊTE === -->
