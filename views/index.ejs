@@ -436,6 +436,9 @@
           <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal' || utilisateur.role === 'superadmin')) { %>
             <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
           <% } %>
+            <% if (utilisateur) { %>
+              <button class="btn-auth" onclick="toggleNotifications()">🔔 Notifications</button>
+            <% } %>
           <% if (!utilisateur) { %>
             <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
             <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
