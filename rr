@@ -2,310 +2,162 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Inscription</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    
-            /* Animations */
-            @keyframes fadeInUp {
-              0% { opacity: 0; transform: translateY(30px); }
-              100% { opacity: 1; transform: translateY(0); }
-            }
-
-            @keyframes zoomIn {
-              0% { transform: scale(0.8); opacity: 0; }
-              100% { transform: scale(1); opacity: 1; }
-            }
-
-            @keyframes fadeIn {
-              from { opacity: 0; }
-              to { opacity: 1; }
-            }
-
-            @keyframes shake {
-              0%, 100% { transform: translateX(0); }
-              25% { transform: translateX(-5px); }
-              75% { transform: translateX(5px); }
-            }
-
-            @keyframes popIn {
-              0% { transform: scale(0.95); opacity: 0; }
-              100% { transform: scale(1); opacity: 1; }
-            }
-
-            body {
-              margin: 0;
-              font-family: Arial, sans-serif;
-            }
-
-            html, body {
-              height: 100%;
-              display: flex;
-              flex-direction: column;
-            }
-
-            main {
-              flex: 1;
-            }
-
-            header, footer {
-              background-color: #003366;
-              color: white;
-            }
-
-            .top-bar {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              padding: 10px 20px;
-              background-color: #003366;
-              border-bottom: 1px solid #002244;
-            }
-
-            .auth-buttons {
-              display: flex;
-              gap: 10px;
-            }
-
-            .btn-auth {
-              background-color: white;
-              color: #003366;
-              border: none;
-              border-radius: 4px;
-              padding: 8px 14px;
-              font-weight: bold;
-              font-size: 14px;
-              cursor: pointer;
-              transition: transform 0.2s ease, background-color 0.3s ease;
-            }
-
-            .btn-auth:hover {
-              transform: scale(1.05);
-              background-color: #e6e6e6;
-            }
-
-            .header-content {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              padding: 10px 40px;
-            }
-
-            .header-content img {
-              max-height: 150px;
-              height: auto;
-              width: auto;
-            }
-
-            .titre-et-tagline {
-              text-align: center;
-              flex: 1;
-            }
-
-            .titre-et-tagline h1 {
-              font-size: 26px;
-              margin: 10px 0 5px;
-            }
-
-            nav {
-              text-align: center;
-              background-color: #002244;
-              padding: 10px 0;
-            }
-
-            nav a {
-              margin: 0 12px;
-              text-decoration: none;
-              color: white;
-              font-weight: bold;
-              transition: color 0.3s ease;
-            }
-
-            nav a:hover {
-              color: #cce0ff;
-            }
-
-            main {
-              padding: 20px;
-              text-align: center;
-            }
-
-            footer {
-              text-align: center;
-              padding: 15px 0;
-              margin-top: 30px;
-              font-size: 14px;
-            }
-
-            .poster-wrapper {
-              position: fixed;
-              top: 30%;
-              right: -400px;
-              z-index: 10000;
-              transition: right 0.4s ease, opacity 0.4s ease;
-              opacity: 0.6;
-              border-radius: 8px 0 0 8px;
-            }
-
-            .poster-wrapper img {
-              height: 300px;
-              cursor: pointer;
-            }
-
-            .poster-wrapper:hover {
-              right: 0;
-              opacity: 1;
-            }
-  </style>
+  <title>Service de Réanimation - CHU Mustapha</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+  <body class="<% if (utilisateur) {
+    if (['admin', 'adminprincipal', 'superadmin'].includes(utilisateur.role)) { %>dark-theme<%
+    } else if (utilisateur.role === 'kinesitherapeute') { %>orange-theme<%
+    } else if (utilisateur.role === 'infirmier') { %>iceblue-theme<%
+    } else if (utilisateur.role === 'aide-soignant') { %>violet-theme<%
+    } else if (utilisateur.role === 'malade') { %>military-theme<%
+    } else if (utilisateur.role === 'manipulateur') { %>pink-theme<%
+    }
+  } %>">
+
 
   <!-- === BARRE DU HAUT === -->
-  <div class="top-bar">
-    <div id="welcomeMessage">
-      <% if (utilisateur && utilisateur.nom) { %>
-        Bienvenue <%= utilisateur.nom %>
-      <% } %>
-    </div>
-    <div class="auth-buttons">
-      <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal')) { %>
-        <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
-      <% } %>
-      <% if (!utilisateur) { %>
-        <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
-        <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
-      <% } else { %>
-        <form action="/logout" method="POST" style="display:inline;">
-          <button type="submit" class="btn-auth">Déconnexion</button>
-        </form>
-      <% } %>
-    </div>
-  </div>
+                <div class="top-bar">
+                  <div id="welcomeMessage" style="color: white; font-size: 18px; font-weight: bold;">
+                    <% if (utilisateur && utilisateur.nom) { %>
+                      Bienvenue <%= utilisateur.nom %>
+                    <% } %>
+                  </div>
+
+                  <div class="auth-buttons">
+                    <% if (utilisateur) { %>
+                      <!-- 🔔 Notifications -->
+                        <div class="notif-wrapper">
+                          <button class="btn-auth" onclick="toggleNotifications()" id="notifButton">
+                            🔔 Notifications
+                              <% if (notifications && notifications.length > 0) { %>
+                                <div class="notifications">
+                                  <span class="badge"><%= notifications.length %></span>
+                                  <ul>
+                                    <% notifications.forEach(n => { %>
+                                      <li><%= n.message %></li>
+                                    <% }) %>
+                                  </ul>
+                                </div>
+                              <% } %>
+                          <div id="notificationBox">
+                        <% if (notifications && notifications.length > 0) { %>
+                          <% notifications.forEach(function(n) { %>
+                            <div style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="window.location.href='<%= n.lien %>'">
+                              <strong><%= n.titre %></strong>
+                              <p style="margin: 5px 0;"><%= n.message %></p>
+                            </div>
+                          <% }) %>
+                        <% } else { %>
+                          <div style="padding: 10px; text-align: center;">Aucune notification</div>
+                        <% } %>
+                      </div>
+                    <% } %>
+                      </div>
+
+                    <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal' || utilisateur.role === 'superadmin')) { %>
+                      <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
+                    <% } %>
+
+                    <% if (!utilisateur) { %>
+                      <div style="display: flex; gap: 10px;">
+                        <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
+                        <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
+                      </div>
+                    <% } else { %>
+                      <button class="btn-auth" onclick="window.location.href='/reset-password'">Password</button>
+                      <form action="/logout" method="POST" style="display: inline;">
+                        <button type="submit" class="btn-auth">Déconnexion</button>
+                      </form>
+                    <% } %>
+                  </div>
+                </div>
 
   <!-- === EN-TÊTE === -->
-  <header>
-    <div class="header-content">
-      <% let logogauche = 'logogauche.png'; let logodroit = 'logodroit.png';
-        switch(utilisateur?.role) {
-          case 'kinesitherapeute': logogauche='logogauche1.png'; logodroit='logodroit1.png'; break;
-          case 'admin': case 'adminprincipal': logogauche='logogauche2.png'; logodroit='logodroit2.png'; break;
-          case 'infirmier': logogauche='logogauche3.png'; logodroit='logodroit3.png'; break;
-          case 'aidesoignant': logogauche='logogauche4.png'; logodroit='logodroit4.png'; break;
-          case 'malade': logogauche='logogauche5.png'; logodroit='logodroit5.png'; break;
-          case 'manipulateur': logogauche='logogauche6.png'; logodroit='logodroit6.png'; break;
-        }
-      %>
-      <img src="/images/<%= logogauche %>" alt="logo gauche personnalisé">
-      <div class="titre-et-tagline">
-        <h1>Service de Réanimation Médicale Polyvalente - CHU Mustapha</h1>
-        <p class="tagline">« Allier science et compassion en situation critique. »</p>
-      </div>
-      <img src="/images/<%= utilisateur ? logodroit : 'logodroit.png' %>" alt="logo droit personnalisé">
-    </div>
-    <nav>
-      <a href="/">Accueil</a>
-      <a href="/presentation">Présentation</a>
-      <a href="/equipe">Équipe</a>
-      <a href="/contact">Contact</a>
-      <a href="/formations">Formations</a>
-      <a href="/protocoles">Nos protocoles</a>
-      <a href="/experiences">Nos expériences</a>
-      <% if (utilisateur?.role === 'malade') { %>
-        <a href="/malades">Espace Malades</a>
-      <% } %>
-      <% if (utilisateur?.role === 'personnel') { %>
-        <a href="/personnel">Espace Personnel</a>
-      <% } %>
-    </nav>
-  </header>
+              <header>
+                <div class="header-content">
+                    <%
+                      const role = utilisateur?.role;
+                      let logogauche = 'logogauche.png';
+                      let logodroit = 'logodroit.png';
+
+                      if (role) {
+                        switch (role) {
+                          case 'kinesitherapeute':
+                            logogauche = 'logogauche1.png';
+                            logodroit = 'logodroit1.png';
+                            break;
+                          case 'admin':
+                          case 'adminprincipal':
+                          case 'superadmin':
+
+logogauche = 'logogauche2.png';
+                            logodroit = 'logodroit2.png';
+                            break;
+                          case 'infirmier':
+                            logogauche = 'logogauche3.png';
+                            logodroit = 'logodroit3.png';
+                            break;
+                          case 'aide-soignant':
+                            logogauche = 'logogauche4.png';
+                            logodroit = 'logodroit4.png';
+                            break;
+                          case 'malade':
+                            logogauche = 'logogauche5.png';
+                            logodroit = 'logodroit5.png';
+                            break;
+                          case 'manipulateur':
+                            logogauche = 'logogauche6.png';
+                            logodroit = 'logodroit6.png';
+                            break;
+                        }
+                      }
+                    %>
+
+                  <img src="/images/<%= logogauche %>" alt="logo gauche personnalisé">
+
+                  <div class="titre-et-tagline">
+                    <h1>Service de Réanimation Médicale Polyvalente - CHU Mustapha</h1>
+                    <p class="tagline">« Allier science et compassion en situation critique. »</p>
+                  </div>
+
+                  <% if (utilisateur) { %>
+                    <img src="/images/<%= logodroit %>" alt="logo droit personnalisé">
+                  <% } else { %>
+                    <img src="/images/logodroit.png" alt="logo droit par défaut">
+                  <% } %>
+                </div>
+                    <nav>
+  <a href="/">Accueil</a>
+  <a href="/presentation">Présentation</a>
+  <a href="/equipe">Équipe</a>
+  <a href="/contact">Contact</a>
+  <a href="/formations">Formations</a>
+  <a href="/protocoles">Nos protocoles</a>
+  <a href="/experiences">Nos expériences</a>
+  <a href="/malades">Espace Malades</a>
+  <a href="/personnel">Espace Personnel</a> <!-- Toujours visible -->
+</nav>
+
+                  </header>
+              </header>
 
   <!-- === CONTENU PRINCIPAL === -->
-  <main>
-    <h1>Inscription</h1>
+                  <main>
+                    <!-- Carrousel et actualités supprimés ici -->
+                  </main>
+                  <footer>
+                    <p>&copy; 2025 Service de Réanimation - CHU Mustapha. Tous droits réservés.</p>
+                  </footer>
 
-    <% if (locals.error && locals.error.length > 0) { %>
-      <div class="flash-error"><%= error[0] %></div>
-    <% } %>
+                        <% if (poster) { %>
+                          <div class="poster-wrapper">
+                            <a href="<%= poster.lien %>" target="_blank">
+                              <img src="<%= poster.url %>" alt="poster">
+                            </a>
+                          </div>
+                        <% } %>
+                          <script src="/js/script.js"></script>
 
-    <% if (locals.success && locals.success.length > 0) { %>
-      <div class="flash-success"><%= success[0] %></div>
-    <% } %>
-
-    <% if (typeof erreur !== 'undefined' && erreur) { %>
-      <p class="flash-error"><%= erreur %></p>
-    <% } %>
-
-    <form id="registerForm" method="POST" action="/register">
-      <input type="text" name="nom" placeholder="Nom complet" value="<%= nom || '' %>" required>
-      <input type="email" name="email" placeholder="Email" value="<%= email || '' %>" required>
-      <input type="password" name="motdepasse" placeholder="Mot de passe" required>
-
-      <label for="role">Type d'utilisateur :</label>
-      <select name="role" required>
-        <option value="">-- Choisissez --</option>
-        <option value="medecin" <%= role === 'medecin' ? 'selected' : '' %>>Médecin</option>
-        <option value="infirmier" <%= role === 'infirmier' ? 'selected' : '' %>>Infirmier</option>
-        <option value="kinesitherapeute" <%= role === 'kinesitherapeute' ? 'selected' : '' %>>Kinésithérapeute</option>
-        <option value="aide-soignant" <%= role === 'aide-soignant' ? 'selected' : '' %>>Aide-soignant</option>
-        <option value="malade" <%= role === 'malade' ? 'selected' : '' %>>Malade</option>
-      </select>
-
-      <input type="hidden" name="codeSaisi" id="codeSaisi">
-      <button type="submit" <%= codeSent ? 'disabled' : '' %>>S'inscrire</button>
-    </form>
-  </main>
-
-  <!-- === MODALE DE CODE === -->
-  <div id="overlay"></div>
-
-  <div id="code-verification">
-    <p>Un code vous a été envoyé par email.</p>
-    <input type="text" id="code" placeholder="Entrez le code reçu">
-    <div style="display: flex; justify-content: space-between;">
-      <button type="button" onclick="soumettreCode()">Valider</button>
-      <button type="button" onclick="fermerPlaque()">Annuler</button>
-    </div>
-  </div>
-
-  <!-- === PIED DE PAGE === -->
-  <footer>
-    <p>&copy; 2025 Service de Réanimation - CHU Mustapha. Tous droits réservés.</p>
-  </footer>
-
-  <!-- === AFFICHE LATERALE === -->
-  <div class="poster-wrapper">
-    <a href="https://sarm.dz/" target="_blank">
-      <img src="/ton-image.jpg" alt="Affiche SARM non trouvée">
-    </a>
-  </div>
-
-  <!-- === SCRIPTS === -->
-  <script>
-    function afficherPlaque() {
-      document.getElementById("overlay").style.display = "block";
-      document.getElementById("code-verification").style.display = "block";
-    }
-
-    function fermerPlaque() {
-      document.getElementById("overlay").style.display = "none";
-      document.getElementById("code-verification").style.display = "none";
-    }
-
-    function soumettreCode() {
-      const code = document.getElementById("code").value.trim();
-      if (!code) {
-        alert("Veuillez entrer un code.");
-        return;
-      }
-      document.getElementById("codeSaisi").value = code;
-      document.getElementById("registerForm").submit();
-    }
-
-    <% if (codeSent) { %>
-      window.onload = function () {
-        afficherPlaque();
-      };
-    <% } %>
-  </script>
 </body>
 </html>

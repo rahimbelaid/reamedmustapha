@@ -21,13 +21,13 @@ router.post('/admin/poster', uploadPoster.single('image'), async (req, res) => {
     });
 
     await newPoster.save();
-    res.redirect('/admin/poster');
+    res.redirect('/admin');
   } catch (err) {
     console.error('❌ Erreur lors de l\'upload du poster :', err);
     res.status(500).send('Erreur serveur');
   }
 });
-router.post('/admin/poster/delete', async (req, res) => {
+router.post('/poster/delete', async (req, res) => {
   try {
     const { cloudinaryId } = req.body;
     if (!cloudinaryId) {
@@ -40,7 +40,7 @@ router.post('/admin/poster/delete', async (req, res) => {
     // Supprimer de MongoDB
     await Poster.findOneAndDelete({ cloudinaryId });
 
-    res.redirect('/admin/poster'); // retour à la page admin
+    res.redirect('/admin'); // retour à la page admin
   } catch (err) {
     console.error('❌ Erreur suppression poster :', err);
     res.status(500).send('Erreur serveur.');

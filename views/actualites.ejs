@@ -1,83 +1,289 @@
-        <!DOCTYPE html>
-        <html lang="fr" class="dark-theme">
-        <head>
-          <meta charset="UTF-8">
-          <title>Actualités de la Réanimation</title>
-          <style>
-            nav a { color: white; }
-            .news-grid {
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-              gap: 20px;
-              margin: 30px 20px;
-            }
-            .news-card {
-              background-color: white;
-              border-radius: 10px;
-              padding: 20px;
-              box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-              transition: transform 0.2s ease;
-              color: #333;
-              cursor: pointer;
-            }
-            body.dark-theme .news-card {
-              background-color: #2a2a3d;
-              color: white;
-            }
-            .news-card:hover {
-              transform: scale(1.02);
-            }
-            .news-date {
-              font-size: 12px;
-              color: #bbb;
-              margin-top: 10px;
-            }
-            .news-content {
-              display: none;
-              margin-top: 10px;
-              font-size: 14px;
-              line-height: 1.4;
-            }
-            .news-card.open .news-content {
-              display: block;
-            }
-          </style>
-        </head>
-        <body class="dark-theme">
-          <header>
-            <nav>
-              <a href="/">Accueil</a>
-              <a href="/actualites">Actualités</a>
-            </nav>
-          </header>
+                    <!DOCTYPE html>
+                    <html lang="fr">
+                    <head>
+                      <meta charset="UTF-8">
+                      <title>Service de Réanimation - CHU Mustapha</title>
+                      <link rel="stylesheet" href="/css/style.css">
+                      <style>
+                        * {
+                          box-sizing: border-box;
+                        }
 
-          <main>
-            <h2 class="actualites-title">Dernières Actualités</h2>
-            <div class="news-grid">
-              <% actualites.forEach(function(actu, index) { %>
-                <div class="news-card" onclick="toggleContent(<%= index %>)" id="card-<%= index %>">
-                  <h3><%= actu.titre %></h3>
-                  <p><%= actu.description %></p>
-                  <div class="news-date">
-                    Publié le <%= new Date(actu.datePublication).toLocaleDateString('fr-FR') %>
-                  </div>
-                  <div class="news-content">
-                    <%= actu.contenu %>
-                  </div>
-                </div>
-              <% }); %>
-            </div>
-          </main>
+                        body {
+                          margin: 0;
+                          font-family: 'Segoe UI', sans-serif;
+                          background-color: #1e1e2f;
+                          color: white;
+                          transition: background-color 0.3s ease, color 0.3s ease;
+                        }
 
-          <footer>
-            &copy; 2025 Réanimation – Tous droits réservés
-          </footer>
+                        nav a {
+                          color: #ffffff;
+                          text-decoration: none;
+                          font-weight: 500;
+                          transition: color 0.3s ease;
+                        }
 
-          <script>
-            function toggleContent(index) {
-              const card = document.getElementById('card-' + index);
-              card.classList.toggle('open');
-            }
-          </script>
-        </body>
-        </html>
+                        nav a:hover {
+                          color: #00bcd4;
+                        }
+
+                        /* ==== ACTUALITÉS CLAIRES ==== */
+                        .actualites-light {
+                          background-color: #f9f9f9;
+                          color: #1e1e2f;
+                          padding: 40px 20px;
+                          transition: background-color 0.3s ease, color 0.3s ease;
+                        }
+
+                        .actualites-light .actualites-title {
+                          text-align: center;
+                          margin: 30px 0 10px;
+                          font-size: 2rem;
+                          color: #0078a8;
+                        }
+
+                        .actualites-light .news-grid {
+                          display: grid;
+                          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                          gap: 20px;
+                          padding: 20px;
+                        }
+
+                        .actualites-light .news-card {
+                          background-color: white;
+                          border-radius: 12px;
+                          padding: 20px;
+                          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+                          transition: transform 0.3s ease, box-shadow 0.3s ease;
+                          overflow: hidden;
+                          cursor: pointer;
+                          color: #333;
+                        }
+
+                        .actualites-light .news-card:hover {
+                          transform: translateY(-5px);
+                          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+                        }
+
+                        .actualites-light .news-card h3 {
+                          margin: 0 0 10px;
+                          font-size: 1.3rem;
+                          color: #0078a8;
+                        }
+
+                        .actualites-light .news-card p {
+                          font-size: 1rem;
+                          color: #444;
+                          margin: 0 0 10px;
+                        }
+
+                        .actualites-light .news-date {
+                          font-size: 0.8rem;
+                          color: #777;
+                          margin-top: 5px;
+                        }
+
+                        .actualites-light .news-content {
+                          max-height: 0;
+                          opacity: 0;
+                          transition: max-height 0.5s ease, opacity 0.5s ease;
+                          overflow: hidden;
+                          margin-top: 10px;
+                          font-size: 0.95rem;
+                          color: #555;
+                        }
+
+                        .actualites-light .news-card.open .news-content {
+                          max-height: 300px;
+                          opacity: 1;
+                        }
+                      </style>
+                    </head>
+                    <%
+                      let themeClasse = '';
+                      if (utilisateur) {
+                        if (['admin', 'adminprincipal', 'superadmin'].includes(utilisateur.role)) {
+                          themeClasse = 'dark-theme';
+                        } else if (utilisateur.role === 'kinesitherapeute') {
+                          themeClasse = 'orange-theme';
+                        } else if (utilisateur.role === 'infirmier') {
+                          themeClasse = 'iceblue-theme';
+                        } else if (utilisateur.role === 'aide-soignant') {
+                          themeClasse = 'violet-theme';
+                        } else if (utilisateur.role === 'malade') {
+                          themeClasse = 'military-theme';
+                        } else if (utilisateur.role === 'manipulateur') {
+                          themeClasse = 'pink-theme';
+                        }
+                      }
+                    %>
+                    <body class="<%= themeClasse %>">
+
+                      <!-- === BARRE DU HAUT === -->
+                      <div class="top-bar">
+                        <div id="welcomeMessage" style="color: white; font-size: 18px; font-weight: bold;">
+                          <% if (utilisateur && utilisateur.nom) { %>
+                            Bienvenue <%= utilisateur.nom %>
+                          <% } %>
+                        </div>
+
+                        <div class="auth-buttons">
+                          <% if (utilisateur) { %>
+                            <div class="notif-wrapper">
+                              <button class="btn-auth" onclick="toggleNotifications()" id="notifButton">
+                                🔔 Notifications
+                                <% if (notifications && notifications.length > 0) { %>
+                                  <div class="notifications">
+                                    <span class="badge"><%= notifications.length %></span>
+                                    <ul>
+                                      <% notifications.forEach(n => { %>
+                                        <li><%= n.message %></li>
+                                      <% }) %>
+                                    </ul>
+                                  </div>
+                                <% } %>
+                              </button>
+                              <div id="notificationBox">
+                                <% if (notifications && notifications.length > 0) { %>
+                                  <% notifications.forEach(function(n) { %>
+                                    <div style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="window.location.href='<%= n.lien %>'">
+                                      <strong><%= n.titre %></strong>
+                                      <p style="margin: 5px 0;"><%= n.message %></p>
+                                    </div>
+                                  <% }) %>
+                                <% } else { %>
+                                  <div style="padding: 10px; text-align: center;">Aucune notification</div>
+                                <% } %>
+                              </div>
+                            </div>
+                          <% } %>
+
+                          <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal' || utilisateur.role === 'superadmin')) { %>
+                            <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
+                          <% } %>
+
+                          <% if (!utilisateur) { %>
+                            <div style="display: flex; gap: 10px;">
+                              <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
+                              <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
+                            </div>
+                          <% } else { %>
+                            <button class="btn-auth" onclick="window.location.href='/reset-password'">Password</button>
+                            <form action="/logout" method="POST" style="display: inline;">
+                              <button type="submit" class="btn-auth">Déconnexion</button>
+                            </form>
+                          <% } %>
+                        </div>
+                      </div>
+
+                      <!-- === EN-TÊTE === -->
+                      <header>
+                        <div class="header-content">
+                          <%
+                            const role = utilisateur?.role;
+                            let logogauche = 'logogauche.png';
+                            let logodroit = 'logodroit.png';
+
+                            if (role) {
+                              switch (role) {
+                                case 'kinesitherapeute':
+                                  logogauche = 'logogauche1.png';
+                                  logodroit = 'logodroit1.png';
+                                  break;
+                                case 'admin':
+                                case 'adminprincipal':
+                                case 'superadmin':
+                                  logogauche = 'logogauche2.png';
+                                  logodroit = 'logodroit2.png';
+                                  break;
+                                case 'infirmier':
+                                  logogauche = 'logogauche3.png';
+                                  logodroit = 'logodroit3.png';
+                                  break;
+                                case 'aide-soignant':
+                                  logogauche = 'logogauche4.png';
+                                  logodroit = 'logodroit4.png';
+                                  break;
+                                case 'malade':
+                                  logogauche = 'logogauche5.png';
+                                  logodroit = 'logodroit5.png';
+                                  break;
+                                case 'manipulateur':
+                                  logogauche = 'logogauche6.png';
+                                  logodroit = 'logodroit6.png';
+                                  break;
+                              }
+                            }
+                          %>
+
+                          <img src="/images/<%= logogauche %>" alt="logo gauche personnalisé">
+
+                          <div class="titre-et-tagline">
+                            <h1>Service de Réanimation Médicale Polyvalente - CHU Mustapha</h1>
+                            <p class="tagline">« Allier science et compassion en situation critique. »</p>
+                          </div>
+
+                          <% if (utilisateur) { %>
+                            <img src="/images/<%= logodroit %>" alt="logo droit personnalisé">
+                          <% } else { %>
+                            <img src="/images/logodroit.png" alt="logo droit par défaut">
+                          <% } %>
+                        </div>
+
+                        <nav>
+                          <a href="/">Accueil</a>
+                          <a href="/presentation">Présentation</a>
+                          <a href="/equipe">Équipe</a>
+                          <a href="/contact">Contact</a>
+                          <a href="/formations">Formations</a>
+                          <a href="/protocoles">Nos protocoles</a>
+                          <a href="/experiences">Nos expériences</a>
+                          <a href="/malades">Espace Malades</a>
+                          <a href="/personnel">Espace Personnel</a>
+                        </nav>
+                      </header>
+
+                      <!-- === CONTENU PRINCIPAL AVEC ACTUALITÉS EN CLAIR === -->
+                      <main>
+                        <div class="actualites-light">
+                          <h2 class="actualites-title">Dernières Actualités</h2>
+                          <div class="news-grid">
+                            <% actualites.forEach(function(actu, index) { %>
+                              <div class="news-card" onclick="toggleContent(<%= index %>)" id="card-<%= index %>">
+                                <h3><%= actu.titre %></h3>
+                                <p><%= actu.description %></p>
+                                <div class="news-date">
+                                  Publié le <%= new Date(actu.datePublication).toLocaleDateString('fr-FR') %>
+                                </div>
+                                <div class="news-content">
+                                  <%= actu.contenu %>
+                                </div>
+                              </div>
+                            <% }); %>
+                          </div>
+                        </div>
+                      </main>
+
+                      <!-- === FOOTER === -->
+                      <footer>
+                        <p>&copy; 2025 Service de Réanimation - CHU Mustapha. Tous droits réservés.</p>
+                      </footer>
+
+                      <% if (poster) { %>
+                        <div class="poster-wrapper">
+                          <a href="<%= poster.lien %>" target="_blank">
+                            <img src="<%= poster.url %>" alt="poster">
+                          </a>
+                        </div>
+                      <% } %>
+
+                      <script src="/js/script.js"></script>
+                      <script>
+                        function toggleContent(index) {
+                          const card = document.getElementById('card-' + index);
+                          card.classList.toggle('open');
+                        }
+                      </script>
+                    </body>
+                    </html>

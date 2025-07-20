@@ -424,11 +424,13 @@
     <p>&copy; 2025 Service de Réanimation - CHU Mustapha. Tous droits réservés.</p>
   </footer>
 
-  <div class="poster-wrapper">
-    <a href="https://sarm.dz/" target="_blank">
-      <img src="/ton-image.jpg" alt="Affiche SARM non trouvée">
-    </a>
-  </div>
+        <% if (poster) { %>
+          <div class="poster-wrapper">
+            <a href="<%= poster.lien %>" target="_blank">
+              <img src="<%= poster.url %>" alt="poster">
+            </a>
+          </div>
+        <% } %>
 
   <!-- === MODALE MOT DE PASSE OUBLIÉ === -->
   <div id="forgotPasswordModal">
