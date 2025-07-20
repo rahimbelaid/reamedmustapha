@@ -62,6 +62,29 @@
           <% }); %>
         </ul>
       <% } %>
+        <h5>Gestion du Poster Latéral</h5>
+
+        <% if (poster) { %>
+          <p><strong>Lien :</strong> <%= poster.lien %></p>
+          <a href="<%= poster.lien %>" target="_blank">
+            <img src="<%= poster.url %>" alt="Poster actuel" style="max-height:200px;">
+          </a>
+          <form action="/admin/poster/delete" method="POST" style="margin-top: 10px;">
+            <button type="submit">❌ Supprimer le poster</button>
+          </form>
+        <% } else { %>
+          <p>Aucun poster actuellement</p>
+        <% } %>
+
+        <form action="/admin/poster" method="POST" enctype="multipart/form-data">
+          <label>Image Poster : </label><br>
+          <input type="file" name="image" accept="image/*" required><br><br>
+
+          <label>Lien (cliquable) : </label><br>
+          <input type="url" name="lien" placeholder="https://exemple.com" required><br><br>
+
+          <button type="submit">📤 Envoyer le poster</button>
+        </form>
 
     </body>
     </html>

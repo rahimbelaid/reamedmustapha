@@ -10,6 +10,7 @@ const connectDB = require('./config/db'); // Importer la fonction de connexion �
 connectDB(); // Connecter à MongoDB
 const cron = require('node-cron'); // 🔁 Cron pour exécuter receiveMail
 const { exec } = require('child_process');
+const posterMiddleware = require('./middlewares/posterMiddleware'); // Middleware pour les posters
 
 const app = express();
 const SESSION_SECRET = process.env.SESSION_SECRET;
@@ -60,7 +61,7 @@ app.use((req, res, next) => {
   res.locals.error = req.flash('error');
   next();
 });
-
+app.use(posterMiddleware);
 // ✅ Importation des routes
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');

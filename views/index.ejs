@@ -38,11 +38,18 @@
       position: relative; /* Permet de positionner la boîte sous le bouton */
     }
 
+    #notifButton {
+      position: relative;
+    }
+
     #notificationBox {
       display: none;
       position: absolute;
-      top: 100%; /* Juste en dessous des boutons */
-      right: 0;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 8px;
+
       background-color: white;
       color: black;
       border: 1px solid #ccc;
@@ -52,8 +59,8 @@
       width: 300px;
       max-height: 400px;
       overflow-y: auto;
-      margin-top: 8px; /* Espace entre le bouton et la boîte */
     }
+
 
       .btn-auth {
         background-color: white;
@@ -430,6 +437,82 @@
       padding: 8px;
       border-radius: 8px;
     }
+    /* Animation slide+fade notification*/
+    @keyframes slideFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideFadeOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+    }
+
+    #notificationBox.show {
+      animation: slideFadeIn 0.3s ease forwards;
+    }
+
+    #notificationBox.hide {
+      animation: slideFadeOut 0.2s ease forwards;
+    }
+    #notifButton {
+      position: relative;
+    }
+
+    #notifBadge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background-color: red;
+      color: white;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 50%;
+      font-weight: bold;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .notif-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    #notificationBox {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 8px;
+
+      background-color: white;
+      color: black;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 9999;
+      width: 300px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
   </style>
 </head>
   <body class="<% if (utilisateur) {
@@ -454,10 +537,14 @@
             <div class="auth-buttons">
               <% if (utilisateur) { %>
                 <!-- 🔔 Notifications -->
-                <button class="btn-auth" onclick="toggleNotifications()">🔔 Notifications</button>
-
-                <!-- Notification Box placée ici sous le bouton -->
-                <div id="notificationBox">
+                  <div class="notif-wrapper">
+                    <button class="btn-auth" onclick="toggleNotifications()" id="notifButton">
+                      🔔 Notifications
+                      <% if (notifications && notifications.length > 0) { %>
+                        <span id="notifBadge"><%= notifications.length %></span>
+                      <% } %>
+                    </button>
+                    <div id="notificationBox">
                   <% if (notifications && notifications.length > 0) { %>
                     <% notifications.forEach(function(n) { %>
                       <div style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="window.location.href='<%= n.lien %>'">
@@ -470,6 +557,7 @@
                   <% } %>
                 </div>
               <% } %>
+                </div>
 
               <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal' || utilisateur.role === 'superadmin')) { %>
                 <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
@@ -606,33 +694,65 @@ logogauche = 'logogauche2.png';
                     <p>&copy; 2025 Service de Réanimation - CHU Mustapha. Tous droits réservés.</p>
                   </footer>
 
-                  <div class="poster-wrapper">
-                    <a href="https://sarm.dz/" target="_blank">
-                      <img src="/ton-image.jpg" alt="Affiche SARM non trouvée">
-                    </a>
-                  </div>
-                  <script>
-                    // Carousel
-                    let index = 0;
-                    const slides = document.querySelector('.carousel-slides');
-                    const total = slides.children.length;
+                        <% if (poster) { %>
+                          <div class="poster-wrapper">
+                            <a href="<%= poster.lien %>" target="_blank">
+                              <img src="<%= poster.url %>" alt="poster">
+                            </a>
+                          </div>
+                        <% } %>
+                        <script>
+                          // Carousel
+                          let index = 0;
+                          const slides = document.querySelector('.carousel-slides');
+                          const total = slides.children.length;
 
-                    setInterval(() => {
-                      index = (index + 1) % total;
-                      slides.style.transform = `translateX(-${index * 100}%)`;
-                    }, 3000); // Change toutes les 3 secondes
+                          setInterval(() => {
+                            index = (index + 1) % total;
+                            slides.style.transform = `translateX(-${index * 100}%)`;
+                          }, 3000);
 
-                    // Toggle pour les actualités
-                    function toggleContent(index) {
-                      const div = document.getElementById(`contenu-${index}`);
-                      div.style.display = (div.style.display === "none" || div.style.display === "") ? "block" : "none";
-                    }
-                    // 🔔 Afficher/Masquer les notifications
-                    function toggleNotifications() {
-                      const box = document.getElementById('notificationBox');
-                      box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
-                    }
-                  </script>
+                          // Toggle actualité
+                          function toggleContent(index) {
+                            const div = document.getElementById(`contenu-${index}`);
+                            div.style.display = (div.style.display === "none" || div.style.display === "") ? "block" : "none";
+                          }
+
+                          // 🔔 Toggle Notifications avec animation
+                          function toggleNotifications() {
+                            const box = document.getElementById('notificationBox');
+
+                            if (box.classList.contains('show')) {
+                              box.classList.remove('show');
+                              box.classList.add('hide');
+                              setTimeout(() => {
+                                box.style.display = 'none';
+                              }, 200); // Match duration of slideFadeOut
+                            } else {
+                              box.style.display = 'block';
+                              box.classList.remove('hide');
+                              box.classList.add('show');
+                            }
+                          }
+
+                          // Fermer la boîte si clic en dehors
+                          document.addEventListener('click', function(event) {
+                            const box = document.getElementById('notificationBox');
+                            const button = document.querySelector('.btn-auth[onclick="toggleNotifications()"]');
+
+                            if (!box || !button) return;
+
+                            if (!box.contains(event.target) && !button.contains(event.target)) {
+                              if (box.classList.contains('show')) {
+                                box.classList.remove('show');
+                                box.classList.add('hide');
+                                setTimeout(() => {
+                                  box.style.display = 'none';
+                                }, 200);
+                              }
+                            }
+                          });
+                        </script>
 
 </body>
 </html>

@@ -1,15 +1,18 @@
+// controllers/publicController.js
+
 const Message = require('../models/message');
 const Actualite = require('../models/actualite.model');
 const Carousel = require('../models/carrousel.model');
-const Notification = require('../models/notification.model'); // ✅ Ajout du modèle Notification
+const Notification = require('../models/notification.model');
+const Poster = require('../models/Poster');
 
 // Page d'accueil
 exports.afficherAccueil = async (req, res) => {
   try {
     const utilisateur = req.session.utilisateur;
-
     const actualites = await Actualite.find().sort({ datePublication: -1 }).limit(4);
     const imagesCarousel = await Carousel.find();
+    const poster = await Poster.findOne({});
 
     let notifications = [];
     if (utilisateur) {
@@ -22,7 +25,8 @@ exports.afficherAccueil = async (req, res) => {
       utilisateur,
       actualites,
       imagesCarousel,
-      notifications // ✅ Envoie les notifications à la vue
+      notifications,
+      poster
     });
   } catch (err) {
     console.error(err);
@@ -30,7 +34,8 @@ exports.afficherAccueil = async (req, res) => {
       utilisateur: req.session.utilisateur,
       actualites: [],
       imagesCarousel: [],
-      notifications: [] // ✅ Toujours envoyer la clé
+      notifications: [],
+      poster: null
     });
   }
 };
