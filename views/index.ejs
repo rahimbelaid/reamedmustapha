@@ -527,53 +527,55 @@
 
 
   <!-- === BARRE DU HAUT === -->
-          <div class="top-bar">
-            <div id="welcomeMessage" style="color: white; font-size: 18px; font-weight: bold;">
-              <% if (utilisateur && utilisateur.nom) { %>
-                Bienvenue <%= utilisateur.nom %>
-              <% } %>
-            </div>
+                <div class="top-bar">
+                  <div id="welcomeMessage" style="color: white; font-size: 18px; font-weight: bold;">
+                    <% if (utilisateur && utilisateur.nom) { %>
+                      Bienvenue <%= utilisateur.nom %>
+                    <% } %>
+                  </div>
 
-            <div class="auth-buttons">
-              <% if (utilisateur) { %>
-                <!-- 🔔 Notifications -->
-                  <div class="notif-wrapper">
-                    <button class="btn-auth" onclick="toggleNotifications()" id="notifButton">
-                      🔔 Notifications
-                      <% if (notifications && notifications.length > 0) { %>
-                        <span id="notifBadge"><%= notifications.length %></span>
-                      <% } %>
-                    </button>
-                    <div id="notificationBox">
-                  <% if (notifications && notifications.length > 0) { %>
-                    <% notifications.forEach(function(n) { %>
-                      <div style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="window.location.href='<%= n.lien %>'">
-                        <strong><%= n.titre %></strong>
-                        <p style="margin: 5px 0;"><%= n.message %></p>
+                  <div class="auth-buttons">
+                    <% if (utilisateur) { %>
+                      <!-- 🔔 Notifications -->
+                        <div class="notif-wrapper">
+                          <button class="btn-auth" onclick="toggleNotifications()" id="notifButton">
+                            🔔 Notifications
+                            <% if (notifications && notifications.length > 0) { %>
+                              <span id="notifBadge"><%= notifications.length %></span>
+                            <% } %>
+                          </button>
+                          <div id="notificationBox">
+                        <% if (notifications && notifications.length > 0) { %>
+                          <% notifications.forEach(function(n) { %>
+                            <div style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="window.location.href='<%= n.lien %>'">
+                              <strong><%= n.titre %></strong>
+                              <p style="margin: 5px 0;"><%= n.message %></p>
+                            </div>
+                          <% }) %>
+                        <% } else { %>
+                          <div style="padding: 10px; text-align: center;">Aucune notification</div>
+                        <% } %>
                       </div>
-                    <% }) %>
-                  <% } else { %>
-                    <div style="padding: 10px; text-align: center;">Aucune notification</div>
-                  <% } %>
-                </div>
-              <% } %>
-                </div>
+                    <% } %>
+                      </div>
 
-              <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal' || utilisateur.role === 'superadmin')) { %>
-                <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
-              <% } %>
+                    <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal' || utilisateur.role === 'superadmin')) { %>
+                      <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
+                    <% } %>
 
-              <% if (!utilisateur) { %>
-                <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
-                <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
-              <% } else { %>
-                <button class="btn-auth" onclick="window.location.href='/reset-password'">Password</button>
-                <form action="/logout" method="POST" style="display: inline;">
-                  <button type="submit" class="btn-auth">Déconnexion</button>
-                </form>
-              <% } %>
-            </div>
-          </div>
+                    <% if (!utilisateur) { %>
+                      <div style="display: flex; gap: 10px;">
+                        <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
+                        <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
+                      </div>
+                    <% } else { %>
+                      <button class="btn-auth" onclick="window.location.href='/reset-password'">Password</button>
+                      <form action="/logout" method="POST" style="display: inline;">
+                        <button type="submit" class="btn-auth">Déconnexion</button>
+                      </form>
+                    <% } %>
+                  </div>
+                </div>
 
   <!-- === EN-TÊTE === -->
               <header>

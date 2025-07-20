@@ -71,6 +71,7 @@ const contactRoutes = require('./routes/contact');
 const messagerieRoutes = require('./routes/messagerie');
 const siteRoutes = require('./routes/site');
 const carouselRoutes = require('./routes/carousel');
+const posterRoutes = require('./routes/poster');
 
 // ✅ Utilisation des routes
 app.use(authRoutes);
@@ -83,6 +84,7 @@ app.use(adminRoutes);
 app.use('/admin', siteRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use(carouselRoutes);
+app.use(posterRoutes);
 
 // ✅ Middleware pour gérer les erreurs 404
 app.use((req, res) => {
