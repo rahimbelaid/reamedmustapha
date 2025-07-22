@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Service de Réanimation - CHU Mustapha</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-pAp0uhqYwKkK7eG8cokY3UKZDxdREq7jx6aE+KzFFafVc+klZ7dUw3LoPKGH5nNfgfO0P6Zql4Uc47yZfUWTlg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     /* === LAYOUT GLOBAL POUR FIXER LE FOOTER EN BAS === */
     html, body {
@@ -264,7 +265,100 @@
       background-color: #ffe9f3;
       border: 1px solid #f3a9cb;
     }
+    .formation-card {
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      padding: 1.2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideFadeIn 0.6s forwards;
+    }
 
+    .formation-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .formation-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    .formation-description {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: #555;
+    }
+
+    .formation-meta {
+      font-size: 0.8rem;
+      color: #777;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .formation-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .formation-actions button,
+    .formation-actions a {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.5rem 0.8rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .formation-actions button:hover,
+    .formation-actions a:hover {
+      background-color: #0056b3;
+    }
+    .dark-theme .formation-card {
+      background-color: #2a2a2a;
+      color: #f1f1f1;
+    }
+
+    .orange-theme .formation-card {
+      background-color: #fff5e5;
+      border: 1px solid #f0b97d;
+    }
+
+    .iceblue-theme .formation-card {
+      background-color: #e5f8ff;
+      border: 1px solid #91c8e4;
+    }
+
+    .violet-theme .formation-card {
+      background-color: #f6efff;
+      border: 1px solid #c2a0f2;
+    }
+
+    .military-theme .formation-card {
+      background-color: #f1f5ec;
+      border: 1px solid #a9ba98;
+    }
+
+    .pink-theme .formation-card {
+      background-color: #ffe9f3;
+      border: 1px solid #f3a9cb;
+    }
+    .formation-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
     </style>
 </head>
 
@@ -455,10 +549,11 @@
           </div>
 
           <div class="formation-actions">
-            <button class="open-formation" data-id="<%= f._id %>">Ouvrir</button>
-            <a href="<%= f.url %>" download class="download-btn">Télécharger</a>
-            <button class="like-btn" data-id="<%= f._id %>">❤️ J'aime</button>
-            <button class="comment-btn" data-id="<%= f._id %>">💬 Commenter</button>
+            <button class="open-formation"><i class="fas fa-eye"></i> Ouvrir</button>
+            <button class="download-btn"><i class="fas fa-download"></i> Télécharger</button>
+            <button class="like-btn"><i class="fas fa-heart"></i> J'aime</button>
+            <button class="comment-btn"><i class="fas fa-comment"></i> Commenter</button>
+
 
             <div class="comment-section hidden" data-id="<%= f._id %>">
               <textarea placeholder="Laissez un commentaire..." class="comment-input"></textarea>
