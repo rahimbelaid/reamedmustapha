@@ -594,8 +594,10 @@
 
           <div class="formation-actions">
             <button class="open-formation"><i class="fas fa-eye"></i> Ouvrir</button>
-            <button class="download-btn"><i class="fas fa-download"></i> Télécharger</button>
-            <button class="like-btn"><i class="fas fa-heart"></i> J'aime</button>
+            <a class="download-btn" href="<%= f.fichierUrl %>" download target="_blank">
+              <i class="fas fa-download"></i> Télécharger
+            </a>
+            <button class="like-btn"><i class="fas fa-heart"></i> J'aime <span class="like-count">0</span></button>
             <button class="comment-btn"><i class="fas fa-comment"></i> Commentaire</button>
 
 
@@ -687,8 +689,12 @@
       // ---------- Commentaires ----------
       document.querySelectorAll(".comment-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
-          const id = btn.dataset.id;
-          const section = document.querySelector(`.comment-section[data-id="${id}"]`);
+          document.querySelectorAll(".comment-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const section = btn.closest(".formation-card").querySelector(".comment-section");
+              section.classList.toggle("hidden");
+            });
+          });
           section.classList.toggle("hidden");
         });
       });
@@ -828,8 +834,39 @@
 
         cards.forEach(card => observer.observe(card));
       });
-    
-
+    document.querySelectorAll(".open-formation").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const card = btn.closest(".formation-card");
+        const type = card.dataset.type;
+        const title = card.querySelector(".formation-title").textContent;
+        const desc = card.querySelector(".formation-description").textContent;
+        const fileUrl = card.querySelector(".download-btn").getAttribute("href"); // corrigé ici
+        modalTitle.textContent = title;
+        modalDescription.textContent = desc;
+        modalFile.innerHTML = "";
+        if (type === "video") {
+          modalFile.innerHTML = `<video controls src="${fileUrl}" width="100%"></video>`;
+        } else if (type === "pdf" || type === "powerpoint" || type === "quiz") {
+          modalFile.innerHTML = `<iframe src="${fileUrl}" width="100%" height="500px"></iframe>`;
+        } else {
+          modalFile.innerHTML = `<a href="${fileUrl}" target="_blank">Voir le contenu</a>`;
+        }
+        modal.classList.remove("hidden");
+      });
+    });
+    document.querySelectorAll(".submit-comment").forEach((submitBtn) => {
+      submitBtn.addEventListener("click", () => {
+        const section = submitBtn.closest(".comment-section");
+        const input = section.querySelector(".comment-input");
+        const commentList = section.querySelector(".comment-list");
+        if (input.value.trim() !== "") {
+          const li = document.createElement("li");
+          li.textContent = input.value.trim();
+          commentList.appendChild(li);
+          input.value = "";
+        }
+      });
+    });
 
   </script>
 </body>
