@@ -151,9 +151,19 @@
 
     /* === FORMATION CARD (ANIMATION D’APPARITION) === */
     .formation-card {
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      padding: 1.2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       opacity: 0;
       transform: translateY(20px);
-      animation: slideFadeIn 0.5s forwards;
+      animation: slideFadeIn 0.6s forwards;
+    }
+
+    .formation-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     }
 
     @keyframes slideFadeIn {
@@ -161,6 +171,97 @@
         opacity: 1;
         transform: translateY(0);
       }
+    }
+
+    .formation-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    .formation-description {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: #555;
+    }
+
+    .formation-meta {
+      font-size: 0.8rem;
+      color: #777;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    /* === BOUTONS FORMATION CENTRÉS ET PETITS === */
+    .formation-actions {
+      display: flex;
+      justify-content: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .formation-actions button,
+    .formation-actions a {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .formation-actions button:hover,
+    .formation-actions a:hover {
+      background-color: #0056b3;
+    }
+
+    /* === SECTION COMMENTAIRE CENTRÉE === */
+    .comment-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      width: 100%;
+    }
+
+    .comment-input {
+      width: 90%;
+      max-width: 600px;
+      min-height: 60px;
+      padding: 0.6rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+    }
+
+    .submit-comment {
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .comment-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 0;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .formation-card.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* === MODAL STYLE === */
@@ -219,26 +320,45 @@
       color: #000;
     }
 
-    /* === FOOTER FIXÉ EN BAS === */
+    /* === FOOTER (par défaut : bleu si non connecté ou médecin) === */
     footer {
-      background-color: #222;
       color: white;
       text-align: center;
       padding: 1rem;
       margin-top: auto;
     }
 
+    body:not(.dark-theme):not(.orange-theme):not(.iceblue-theme):not(.violet-theme):not(.military-theme):not(.pink-theme) footer {
+      background-color: #007bff; /* bleu par défaut */
+    }
+
     /* === THÈMES DYNAMIQUES === */
     .dark-theme #filters,
     .dark-theme .modal-content {
-      background-color: #2a2a2a;
+      background-color: #2f2f2f;
       color: #f1f1f1;
       border: 1px solid #444;
+    }
+    .dark-theme .formation-card {
+      background-color: #3a3a3a;
+      color: #f9f9f9;
+      border: 1px solid #555;
+    }
+    .dark-theme .formation-title {
+      color: #ffffff;
+    }
+    .dark-theme .formation-description,
+    .dark-theme .formation-meta {
+      color: #ddd;
     }
 
     .orange-theme #filters,
     .orange-theme .modal-content {
       background-color: #fff2e0;
+      border: 1px solid #f0b97d;
+    }
+    .orange-theme .formation-card {
+      background-color: #fff5e5;
       border: 1px solid #f0b97d;
     }
 
@@ -247,10 +367,18 @@
       background-color: #e5f4fb;
       border: 1px solid #91c8e4;
     }
+    .iceblue-theme .formation-card {
+      background-color: #e5f8ff;
+      border: 1px solid #91c8e4;
+    }
 
     .violet-theme #filters,
     .violet-theme .modal-content {
       background-color: #f4ecff;
+      border: 1px solid #c2a0f2;
+    }
+    .violet-theme .formation-card {
+      background-color: #f6efff;
       border: 1px solid #c2a0f2;
     }
 
@@ -259,106 +387,21 @@
       background-color: #eef3e8;
       border: 1px solid #a9ba98;
     }
+    .military-theme .formation-card {
+      background-color: #f1f5ec;
+      border: 1px solid #a9ba98;
+    }
 
     .pink-theme #filters,
     .pink-theme .modal-content {
       background-color: #ffe9f3;
       border: 1px solid #f3a9cb;
     }
-    .formation-card {
-      background-color: white;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      padding: 1.2rem;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: slideFadeIn 0.6s forwards;
-    }
-
-    .formation-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-    }
-
-    .formation-title {
-      font-size: 1.3rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-      color: #333;
-    }
-
-    .formation-description {
-      font-size: 0.95rem;
-      margin-bottom: 1rem;
-      color: #555;
-    }
-
-    .formation-meta {
-      font-size: 0.8rem;
-      color: #777;
-      margin-bottom: 1rem;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
-
-    .formation-actions {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .formation-actions button,
-    .formation-actions a {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 0.5rem 0.8rem;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background-color 0.3s ease;
-    }
-
-    .formation-actions button:hover,
-    .formation-actions a:hover {
-      background-color: #0056b3;
-    }
-    .dark-theme .formation-card {
-      background-color: #2a2a2a;
-      color: #f1f1f1;
-    }
-
-    .orange-theme .formation-card {
-      background-color: #fff5e5;
-      border: 1px solid #f0b97d;
-    }
-
-    .iceblue-theme .formation-card {
-      background-color: #e5f8ff;
-      border: 1px solid #91c8e4;
-    }
-
-    .violet-theme .formation-card {
-      background-color: #f6efff;
-      border: 1px solid #c2a0f2;
-    }
-
-    .military-theme .formation-card {
-      background-color: #f1f5ec;
-      border: 1px solid #a9ba98;
-    }
-
     .pink-theme .formation-card {
       background-color: #ffe9f3;
       border: 1px solid #f3a9cb;
     }
-    .formation-card.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+
     </style>
 </head>
 
