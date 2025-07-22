@@ -3,10 +3,19 @@ const router = express.Router();
 const multer = require('multer');
 const methodOverride = require('method-override');
 const Formation = require('../models/Formation');
-const { formationStorage } = require('../config/cloudinary'); // ✅ import du stockage formation Cloudinary
+const { formationStorage } = require('../config/cloudinary'); // ✅ stockage Cloudinary
+const cloudinary = require('cloudinary').v2;
 
 const upload = multer({ storage: formationStorage });
 router.use(methodOverride('_method'));
+
+// 🔍 Déduction du type de fichier pour la suppression
+const getResourceType = (url) => {
+  if (!url) return 'raw'; // fallback
+  if (url.endsWith('.mp4')) return 'video';
+  if (url.endsWith('.pdf') || url.endsWith('.ppt') || url.endsWith('.pptx')) return 'raw';
+  return 'image';
+};
 
 // 📄 Liste des formations (affichage public)
 router.get('/formations', async (req, res) => {
@@ -42,8 +51,8 @@ router.post('/formations/upload', upload.single('fichier'), async (req, res) => 
       description: req.body.description,
       type: req.body.type,
       apparatus: req.body.apparatus,
-      url: req.file.path, // URL Cloudinary
-      publicId: req.file.filename // ID Cloudinary (utile pour suppression)
+      url: req.file.path, // ✅ URL Cloudinary
+      publicId: req.file.filename // ✅ public_id Cloudinary
     });
 
     await formation.save();
@@ -60,10 +69,9 @@ router.delete('/formations/:id', async (req, res) => {
     const formation = await Formation.findById(req.params.id);
     if (!formation) return res.status(404).send('Formation non trouvée');
 
-    const cloudinary = require('cloudinary').v2;
-
     if (formation.publicId) {
-      await cloudinary.uploader.destroy(formation.publicId, { resource_type: 'auto' });
+      const resourceType = getResourceType(formation.url);
+      await cloudinary.uploader.destroy(formation.publicId, { resource_type: resourceType });
     }
 
     await formation.deleteOne();
@@ -75,4 +83,3 @@ router.delete('/formations/:id', async (req, res) => {
 });
 
 module.exports = router;
-
