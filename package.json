@@ -24,6 +24,7 @@
     "imap-simple": "^1.6.3",
     "jsonwebtoken": "^9.0.2",
     "mailparser": "^3.7.4",
+    "method-override": "^3.0.0",
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.3",
     "multer": "^2.0.2",

@@ -1,202 +1,243 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Service de Réanimation - CHU Mustapha</title>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-  <body class="<% if (utilisateur) {
-    if (['admin', 'adminprincipal', 'superadmin'].includes(utilisateur.role)) { %>dark-theme<% 
-    } else if (utilisateur.role === 'kinesitherapeute') { %>orange-theme<% 
-    } else if (utilisateur.role === 'infirmier') { %>iceblue-theme<% 
-    } else if (utilisateur.role === 'aide-soignant') { %>violet-theme<% 
-    } else if (utilisateur.role === 'malade') { %>military-theme<% 
-    } else if (utilisateur.role === 'manipulateur') { %>pink-theme<% 
-    } 
-  } %>">
+                          <!DOCTYPE html>
+                          <html lang="fr">
+                          <head>
+                            <meta charset="UTF-8">
+                            <title>Service de Réanimation - CHU Mustapha</title>
+                            <link rel="stylesheet" href="/css/style.css">
+                          </head>
+                          <body class="<% if (utilisateur) {
+                            if (['admin', 'adminprincipal', 'superadmin'].includes(utilisateur.role)) { %>dark-theme<%
+                            } else if (utilisateur.role === 'kinesitherapeute') { %>orange-theme<%
+                            } else if (utilisateur.role === 'infirmier') { %>iceblue-theme<%
+                            } else if (utilisateur.role === 'aide-soignant') { %>violet-theme<%
+                            } else if (utilisateur.role === 'malade') { %>military-theme<%
+                            } else if (utilisateur.role === 'manipulateur') { %>pink-theme<%
+                            } } %>">
 
+                            <!-- === BARRE DU HAUT === -->
+                            <div class="top-bar">
+                              <div id="welcomeMessage" style="color: white; font-size: 18px; font-weight: bold;">
+                                <% if (utilisateur && utilisateur.nom) { %>
+                                  Bienvenue <%= utilisateur.nom %>
+                                <% } %>
+                              </div>
 
-  <!-- === BARRE DU HAUT === -->
-                <div class="top-bar">
-                  <div id="welcomeMessage" style="color: white; font-size: 18px; font-weight: bold;">
-                    <% if (utilisateur && utilisateur.nom) { %>
-                      Bienvenue <%= utilisateur.nom %>
-                    <% } %>
-                  </div>
+                              <div class="auth-buttons">
+                                <% if (utilisateur) { %>
+                                  <!-- 🔔 Notifications -->
+                                  <div class="notif-wrapper">
+                                    <!-- Bouton Notifications -->
+                                    <button class="btn-auth" onclick="toggleNotifications()" id="notifButton">
+                                      🔔 Notifications
+                                      <% if (notifications && notifications.length > 0) { %>
+                                        <span class="badge"><%= notifications.length %></span>
+                                      <% } %>
+                                    </button>
 
-                  <div class="auth-buttons">
-                    <% if (utilisateur) { %>
-                      <!-- 🔔 Notifications -->
-                        <div class="notif-wrapper">
-                          <button class="btn-auth" onclick="toggleNotifications()" id="notifButton">
-                            🔔 Notifications
-                              <% if (notifications && notifications.length > 0) { %>
-                                <div class="notifications">
-                                  <span class="badge"><%= notifications.length %></span>
-                                  <ul>
-                                    <% notifications.forEach(n => { %>
-                                      <li><%= n.message %></li>
-                                    <% }) %>
-                                  </ul>
+                                    <!-- Boîte de notifications -->
+                                    <div id="notificationBox">
+                                      <% if (notifications && notifications.length > 0) { %>
+                                        <% notifications.forEach(function(n) { %>
+                                          <div style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="window.location.href='<%= n.lien %>'">
+                                            <strong><%= n.titre %></strong>
+                                            <p style="margin: 5px 0;"><%= n.message %></p>
+                                          </div>
+                                        <% }) %>
+                                      <% } else { %>
+                                        <div style="padding: 10px; text-align: center;">Aucune notification</div>
+                                      <% } %>
+                                    </div>
+                                  </div>
+
+                                  <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal' || utilisateur.role === 'superadmin')) { %>
+                                    <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
+                                  <% } %>
+
+                                  <button class="btn-auth" onclick="window.location.href='/reset-password'">Password</button>
+                                  <form action="/logout" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn-auth">Déconnexion</button>
+                                  </form>
+
+                                <% } else { %>
+                                  <div style="display: flex; gap: 10px;">
+                                    <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
+                                    <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
+                                  </div>
+                                <% } %>
+                              </div>
+                            </div>
+
+                            <!-- === EN-TÊTE === -->
+                            <header>
+                              <div class="header-content">
+                                <%
+                                  const role = utilisateur?.role;
+                                  let logogauche = 'logogauche.png';
+                                  let logodroit = 'logodroit.png';
+                                  if (role) {
+                                    switch (role) {
+                                      case 'kinesitherapeute':
+                                        logogauche = 'logogauche1.png';
+                                        logodroit = 'logodroit1.png';
+                                        break;
+                                      case 'admin':
+                                      case 'adminprincipal':
+                                      case 'superadmin':
+                                        logogauche = 'logogauche2.png';
+                                        logodroit = 'logodroit2.png';
+                                        break;
+                                      case 'infirmier':
+                                        logogauche = 'logogauche3.png';
+                                        logodroit = 'logodroit3.png';
+                                        break;
+                                      case 'aide-soignant':
+                                        logogauche = 'logogauche4.png';
+                                        logodroit = 'logodroit4.png';
+                                        break;
+                                      case 'malade':
+                                        logogauche = 'logogauche5.png';
+                                        logodroit = 'logodroit5.png';
+                                        break;
+                                      case 'manipulateur':
+                                        logogauche = 'logogauche6.png';
+                                        logodroit = 'logodroit6.png';
+                                        break;
+                                    }
+                                  }
+                                %>
+                                <img src="/images/<%= logogauche %>" alt="logo gauche personnalisé">
+                                <div class="titre-et-tagline">
+                                  <h1>Service de Réanimation Médicale Polyvalente - CHU Mustapha</h1>
+                                  <p class="tagline">« Allier science et compassion en situation critique. »</p>
                                 </div>
-                              <% } %>
-                          <div id="notificationBox">
-                        <% if (notifications && notifications.length > 0) { %>
-                          <% notifications.forEach(function(n) { %>
-                            <div style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="window.location.href='<%= n.lien %>'">
-                              <strong><%= n.titre %></strong>
-                              <p style="margin: 5px 0;"><%= n.message %></p>
-                            </div>
-                          <% }) %>
-                        <% } else { %>
-                          <div style="padding: 10px; text-align: center;">Aucune notification</div>
-                        <% } %>
-                      </div>
-                    <% } %>
-                      </div>
+                                <% if (utilisateur) { %>
+                                  <img src="/images/<%= logodroit %>" alt="logo droit personnalisé">
+                                <% } else { %>
+                                  <img src="/images/logodroit.png" alt="logo droit par défaut">
+                                <% } %>
+                              </div>
 
-                    <% if (utilisateur && (utilisateur.role === 'admin' || utilisateur.role === 'adminprincipal' || utilisateur.role === 'superadmin')) { %>
-                      <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
-                    <% } %>
+                              <nav>
+                                <a href="/">Accueil</a>
+                                <a href="/presentation">Présentation</a>
+                                <a href="/equipe">Équipe</a>
+                                <a href="/contact">Contact</a>
+                                <a href="/formations">Formations</a>
+                                <a href="/protocoles">Nos protocoles</a>
+                                <a href="/experiences">Nos expériences</a>
+                                <a href="/malades">Espace Malades</a>
+                                <a href="/personnel">Espace Personnel</a>
+                              </nav>
+                            </header>
 
-                    <% if (!utilisateur) { %>
-                      <div style="display: flex; gap: 10px;">
-                        <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
-                        <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
-                      </div>
-                    <% } else { %>
-                      <button class="btn-auth" onclick="window.location.href='/reset-password'">Password</button>
-                      <form action="/logout" method="POST" style="display: inline;">
-                        <button type="submit" class="btn-auth">Déconnexion</button>
-                      </form>
-                    <% } %>
-                  </div>
-                </div>
+                            <!-- === CONTENU PRINCIPAL === -->
+                            <main>
+                              <section class="carousel-container">
+                                <div class="carousel-container">
+                                  <div class="carousel-slides">
+                                    <% if (imagesCarousel && imagesCarousel.length > 0) { %>
+                                      <% imagesCarousel.forEach(function(img) { %>
+                                        <div class="carousel-slide">
+                                          <img src="<%= img.url %>" alt="Image du carousel" style="max-width: 100%; height: auto;">
+                                        </div>
+                                      <% }); %>
+                                    <% } else { %>
+                                      <p>Aucune image.</p>
+                                    <% } %>
+                                  </div>
+                                </div>
 
-  <!-- === EN-TÊTE === -->
-              <header>
-                <div class="header-content">
-                    <% 
-                      const role = utilisateur?.role;
-                      let logogauche = 'logogauche.png';
-                      let logodroit = 'logodroit.png';
+                                <% if (!utilisateur) { %>
+                                  <div class="overlay">
+                                    <h2>Bienvenue sur notre site.</h2>
+                                    <p>Connectez-vous pour accéder à votre espace personnel.</p>
+                                  </div>
+                                <% } %>
+                              </section>
 
-                      if (role) {
-                        switch (role) {
-                          case 'kinesitherapeute':
-                            logogauche = 'logogauche1.png';
-                            logodroit = 'logodroit1.png';
-                            break;
-                          case 'admin':
-                          case 'adminprincipal':
-                          case 'superadmin':
+                              <section class="actualites-container">
+                                <h2 class="actualites-title">
+                                  <a href="/actualites" style="text-decoration: none; color: inherit;">Actualités</a>
+                                </h2>
+                                <% if (actualites && actualites.length > 0) { %>
+                                  <% actualites.slice(0, 4).forEach(function(actu, index) { %>
+                                    <div class="actu-item" onclick="toggleContent(<%= index %>)">
+                                      <h3><%= actu.titre %></h3>
+                                      <p><%= actu.description %></p>
+                                      <div id="contenu-<%= index %>" style="display: none; margin-top: 10px;">
+                                        <p><%= actu.contenu %></p>
+                                      </div>
+                                    </div>
+                                  <% }) %>
+                                <% } else { %>
+                                  <p>Aucune actualité disponible.</p>
+                                <% } %>
+                              </section>
+                            </main>
 
-logogauche = 'logogauche2.png';
-                            logodroit = 'logodroit2.png';
-                            break;
-                          case 'infirmier':
-                            logogauche = 'logogauche3.png';
-                            logodroit = 'logodroit3.png';
-                            break;
-                          case 'aide-soignant':
-                            logogauche = 'logogauche4.png';
-                            logodroit = 'logodroit4.png';
-                            break;
-                          case 'malade':
-                            logogauche = 'logogauche5.png';
-                            logodroit = 'logodroit5.png';
-                            break;
-                          case 'manipulateur':
-                            logogauche = 'logogauche6.png';
-                            logodroit = 'logodroit6.png';
-                            break;
-                        }
-                      }
-                    %>
+                            <footer>
+                              <p>&copy; 2025 Service de Réanimation - CHU Mustapha. Tous droits réservés.</p>
+                            </footer>
 
-                  <img src="/images/<%= logogauche %>" alt="logo gauche personnalisé">
+                            <% if (poster) { %>
+                              <div class="poster-wrapper">
+                                <a href="<%= poster.lien %>" target="_blank">
+                                  <img src="<%= poster.url %>" alt="poster">
+                                </a>
+                              </div>
+                            <% } %>
 
-                  <div class="titre-et-tagline">
-                    <h1>Service de Réanimation Médicale Polyvalente - CHU Mustapha</h1>
-                    <p class="tagline">« Allier science et compassion en situation critique. »</p>
-                  </div>
+                              <script>
+                                // Carousel
+                                let index = 0;
+                                const slides = document.querySelector('.carousel-slides');
+                                const total = slides.children.length;
 
-                  <% if (utilisateur) { %>
-                    <img src="/images/<%= logodroit %>" alt="logo droit personnalisé">
-                  <% } else { %>
-                    <img src="/images/logodroit.png" alt="logo droit par défaut">
-                  <% } %>
-                </div>
-                    <nav>
-                      <a href="/">Accueil</a>
-                      <a href="/presentation">Présentation</a>
-                      <a href="/equipe">Équipe</a>
-                      <a href="/contact">Contact</a>
-                      <a href="/formations">Formations</a>
-                      <a href="/protocoles">Nos protocoles</a>
-                      <a href="/experiences">Nos expériences</a>
-                      <a href="/malades">Espace Malades</a>
-                      <a href="/personnel">Espace Personnel</a> <!-- Toujours visible -->
-                    </nav>
+                                setInterval(() => {
+                                  index = (index + 1) % total;
+                                  slides.style.transform = `translateX(-${index * 100}%)`;
+                                }, 3000);
 
-                  </header>
-              </header>
+                                // Toggle actualité
+                                function toggleContent(index) {
+                                  const div = document.getElementById(`contenu-${index}`);
+                                  div.style.display = (div.style.display === "none" || div.style.display === "") ? "block" : "none";
+                                }
 
-  <!-- === CONTENU PRINCIPAL === -->
-                  <main>
-  <section class="carousel-container">
-    <div class="carousel-container">
-      <div class="carousel-slides">
-        <% if (imagesCarousel && imagesCarousel.length > 0) { %>
-          <% imagesCarousel.forEach(function(img) { %>
-            <div class="carousel-slide">
-              <img src="<%= img.url %>" alt="Image du carousel" style="max-width: 100%; height: auto;">
-            </div>
-          <% }); %>
-        <% } else { %>
-          <p>Aucune image.</p>
-        <% } %>
-      </div>
-    </div>
-                      <% if (!utilisateur) { %>
-                        <div class="overlay">
-                          <h2>Bienvenue sur notre site.</h2>
-                          <p>Connectez-vous pour accéder à votre espace personnel.</p>
-                        </div>
-                      <% } %>
-                    </section>
+                                // 🔔 Toggle Notifications avec animation
+                                function toggleNotifications() {
+                                  const box = document.getElementById('notificationBox');
 
-                    <section class="actualites-container">
-                      <h2 class="actualites-title">
-                        <a href="/actualites" style="text-decoration: none; color: inherit;">Actualités</a>
-                      </h2>
-                      <% if (actualites && actualites.length > 0) { %>
-                        <% actualites.slice(0, 4).forEach((actu, index) => { %>
-                          <div class="actu-item" onclick="toggleContent(<%= index %>)">
-                            <h3><%= actu.titre %></h3>
-                            <p><%= actu.description %></p>
-                            <div id="contenu-<%= index %>" style="display: none; margin-top: 10px;">
-                              <p><%= actu.contenu %></p>
-                            </div>
-                          </div>
-                        <% }) %>
-                      <% } else { %>
-                        <p>Aucune actualité disponible.</p>
-                      <% } %>
-                    </section>
-                  </main>
-                  <footer>
-                    <p>&copy; 2025 Service de Réanimation - CHU Mustapha. Tous droits réservés.</p>
-                  </footer>
+                                  if (box.classList.contains('show')) {
+                                    box.classList.remove('show');
+                                    box.classList.add('hide');
+                                    setTimeout(() => {
+                                      box.style.display = 'none';
+                                    }, 200); // Match duration of slideFadeOut
+                                  } else {
+                                    box.style.display = 'block';
+                                    box.classList.remove('hide');
+                                    box.classList.add('show');
+                                  }
+                                }
 
-                        <% if (poster) { %>
-                          <div class="poster-wrapper">
-                            <a href="<%= poster.lien %>" target="_blank">
-                              <img src="<%= poster.url %>" alt="poster">
-                            </a>
-                          </div>
-                        <% } %>
-                          <script src="/js/script.js"></script>
+                                // Fermer la boîte si clic en dehors
+                                document.addEventListener('click', function(event) {
+                                  const box = document.getElementById('notificationBox');
+                                  const button = document.querySelector('.btn-auth[onclick="toggleNotifications()"]');
 
-</body>
-</html>
+                                  if (!box || !button) return;
+
+                                  if (!box.contains(event.target) && !button.contains(event.target)) {
+                                    if (box.classList.contains('show')) {
+                                      box.classList.remove('show');
+                                      box.classList.add('hide');
+                                      setTimeout(() => {
+                                        box.style.display = 'none';
+                                      }, 200);
+                                    }
+                                  }
+                                });
+                              </script>
+                          </body>
+                          </html>

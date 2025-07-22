@@ -1,0 +1,184 @@
+/* ========== Base ========== */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f7fa;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+header {
+  background: #0077cc;
+  color: white;
+  padding: 1rem 2rem;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+}
+
+main {
+  padding: 2rem;
+}
+
+/* ========== Filtres ========== */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 180px;
+}
+
+.filter-group label {
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+button[type="submit"] {
+  background: #0077cc;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ========== Grille de formations ========== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.formation-card {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.formation-title {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #0077cc;
+}
+
+.formation-meta {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.formation-actions button,
+.download-btn {
+  background: #eeeeee;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 5px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.download-btn {
+  background: #e0f0ff;
+}
+
+.like-btn:hover,
+.comment-btn:hover,
+.open-formation:hover {
+  background: #d0eaff;
+}
+
+/* ========== Modal ========== */
+#modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+#modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: scale(0.95);}
+  to {opacity: 1; transform: scale(1);}
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #999;
+}
+
+/* ========== Commentaires ========== */
+.comment-section {
+  margin-top: 1rem;
+  border-top: 1px solid #ddd;
+  padding-top: 1rem;
+}
+
+.comment-section textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: vertical;
+}
+
+.comment-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.comment-list li {
+  background: #f1f1f1;
+  margin-bottom: 4px;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.hidden {
+  display: none;
+}

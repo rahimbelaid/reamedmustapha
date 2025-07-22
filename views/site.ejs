@@ -86,6 +86,47 @@
 
           <button type="submit">📤 Envoyer le poster</button>
         </form>
+          <h6>Uploader une nouvelle formation</h6>
 
+          <form action="/formations/upload" method="POST" enctype="multipart/form-data">
+            <input type="text" name="titre" required placeholder="Titre" />
+            <textarea name="description" required placeholder="Description"></textarea>
+
+            <select name="apparatus" required>
+              <option value="">-- Appareil --</option>
+              <option value="cardiovasculaire">Cardiovasculaire</option>
+              <option value="digestif">Digestif</option>
+              <option value="respiratoire">Respiratoire</option>
+              <option value="urinaire">Urinaire</option>
+            </select>
+
+            <select name="type" required>
+              <option value="">-- Type --</option>
+              <option value="video">Vidéo</option>
+              <option value="pdf">PDF</option>
+              <option value="quiz">Quiz</option>
+              <option value="autre">Autre</option>
+            </select>
+
+            <input type="file" name="fichier" accept=".mp4,.pdf,.ppt,.pptx" required />
+            <button type="submit">Uploader</button>
+          </form>
+
+          <hr>
+
+          <h6>Formations existantes</h6>
+
+          <% formations.forEach(f => { %>
+            <div style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem;">
+              <h7><%= f.titre %></h7>
+              <p><%= f.description %></p>
+              <p><strong>Type:</strong> <%= f.type %> | <strong>Appareil:</strong> <%= f.apparatus %></p>
+              <a href="<%= f.url %>" target="_blank">📂 Voir</a>
+
+              <form action="/formations/<%= f._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Supprimer cette formation ?')">
+                <button type="submit">🗑️ Supprimer</button>
+              </form>
+            </div>
+          <% }) %>
     </body>
     </html>

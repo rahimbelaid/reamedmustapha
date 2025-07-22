@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Service de Réanimation - CHU Mustapha</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* === LAYOUT GLOBAL POUR FIXER LE FOOTER EN BAS === */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      flex: 1;
+    }
+
+    /* Conteneur principal */
+    .page-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Contenu principal pour pousser le footer en bas */
+    .main-content {
+      flex: 1;
+      padding-bottom: 2rem;
+    }
+
+    /* === TITRE CENTRÉ === */
+    .titre-page {
+      text-align: center;
+      font-size: 2rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* === ZONE DE FILTRES COMPACTE ET CENTRÉE === */
+    #filters,
+    #filter-form {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 1rem;
+      margin: 0 auto 1.5rem auto;
+      border-radius: 15px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      max-width: 1000px;
+      transition: all 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .filters {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    /* Ligne 1 : Titre (champ) */
+    .title-row {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .title-row .filter-group {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .title-row input[type="text"] {
+      width: 100%;
+    }
+
+    /* Ligne 2 : Appareil, Type, Date */
+    .fields-row {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    /* Ligne 3 : Bouton */
+    .button-row {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.85rem;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .filter-group input,
+    .filter-group select {
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      width: 160px;
+    }
+
+    .title-row input {
+      font-size: 0.9rem;
+      padding: 0.45rem 0.7rem;
+    }
+
+    .button-row button[type="submit"] {
+      padding: 0.45rem 1rem;
+      font-size: 0.85rem;
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button-row button[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    /* === GRILLE DES FORMATIONS === */
+    #formation-list.grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    /* === FORMATION CARD (ANIMATION D’APPARITION) === */
+    .formation-card {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideFadeIn 0.5s forwards;
+    }
+
+    @keyframes slideFadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* === MODAL STYLE === */
+    #modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s ease;
+    }
+
+    #modal.hidden {
+      display: none !important;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 800px;
+      position: relative;
+      animation: slideUp 0.4s ease-out;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(40px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #888;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .close-btn:hover {
+      color: #000;
+    }
+
+    /* === FOOTER FIXÉ EN BAS === */
+    footer {
+      background-color: #222;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: auto;
+    }
+
+    /* === THÈMES DYNAMIQUES === */
+    .dark-theme #filters,
+    .dark-theme .modal-content {
+      background-color: #2a2a2a;
+      color: #f1f1f1;
+      border: 1px solid #444;
+    }
+
+    .orange-theme #filters,
+    .orange-theme .modal-content {
+      background-color: #fff2e0;
+      border: 1px solid #f0b97d;
+    }
+
+    .iceblue-theme #filters,
+    .iceblue-theme .modal-content {
+      background-color: #e5f4fb;
+      border: 1px solid #91c8e4;
+    }
+
+    .violet-theme #filters,
+    .violet-theme .modal-content {
+      background-color: #f4ecff;
+      border: 1px solid #c2a0f2;
+    }
+
+    .military-theme #filters,
+    .military-theme .modal-content {
+      background-color: #eef3e8;
+      border: 1px solid #a9ba98;
+    }
+
+    .pink-theme #filters,
+    .pink-theme .modal-content {
+      background-color: #ffe9f3;
+      border: 1px solid #f3a9cb;
+    }
+
+    </style>
+</head>
+
+<body class="<% if (utilisateur) {
+  if (['admin', 'adminprincipal', 'superadmin'].includes(utilisateur.role)) { %>dark-theme<%
+  } else if (utilisateur.role === 'kinesitherapeute') { %>orange-theme<%
+  } else if (utilisateur.role === 'infirmier') { %>iceblue-theme<%
+  } else if (utilisateur.role === 'aide-soignant') { %>violet-theme<%
+  } else if (utilisateur.role === 'malade') { %>military-theme<%
+  } else if (utilisateur.role === 'manipulateur') { %>pink-theme<%
+  } } %>">
+
+  <!-- === BARRE DU HAUT === -->
+  <div class="top-bar">
+    <div id="welcomeMessage" style="color: white; font-size: 18px; font-weight: bold;">
+      <% if (utilisateur && utilisateur.nom) { %>
+        Bienvenue <%= utilisateur.nom %>
+      <% } %>
+    </div>
+
+    <div class="auth-buttons">
+      <% if (utilisateur) { %>
+        <!-- 🔔 Notifications -->
+        <div class="notif-wrapper">
+          <button class="btn-auth" onclick="toggleNotifications()" id="notifButton">
+            🔔 Notifications
+            <% if (notifications && notifications.length > 0) { %>
+              <div class="notifications">
+                <span class="badge"><%= notifications.length %></span>
+                <ul>
+                  <% notifications.forEach(n => { %>
+                    <li><%= n.message %></li>
+                  <% }) %>
+                </ul>
+              </div>
+            <% } %>
+            <div id="notificationBox">
+              <% if (notifications && notifications.length > 0) { %>
+                <% notifications.forEach(function(n) { %>
+                  <div style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="window.location.href='<%= n.lien %>'">
+                    <strong><%= n.titre %></strong>
+                    <p style="margin: 5px 0;"><%= n.message %></p>
+                  </div>
+                <% }) %>
+              <% } else { %>
+                <div style="padding: 10px; text-align: center;">Aucune notification</div>
+              <% } %>
+            </div>
+          </button>
+        </div>
+
+        <% if (['admin', 'adminprincipal', 'superadmin'].includes(utilisateur.role)) { %>
+          <button class="btn-auth" onclick="window.location.href='/admin'">Admin</button>
+        <% } %>
+
+        <button class="btn-auth" onclick="window.location.href='/reset-password'">Password</button>
+        <form action="/logout" method="POST" style="display: inline;">
+          <button type="submit" class="btn-auth">Déconnexion</button>
+        </form>
+      <% } else { %>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-auth" onclick="window.location.href='/login'">Connexion</button>
+          <button class="btn-auth" onclick="window.location.href='/register'">Inscription</button>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- === EN-TÊTE === -->
+  <header>
+    <div class="header-content">
+      <% 
+        const role = utilisateur?.role;
+        let logogauche = 'logogauche.png';
+        let logodroit = 'logodroit.png';
+        if (role) {
+          switch (role) {
+            case 'kinesitherapeute': logogauche = 'logogauche1.png'; logodroit = 'logodroit1.png'; break;
+            case 'admin':
+            case 'adminprincipal':
+            case 'superadmin': logogauche = 'logogauche2.png'; logodroit = 'logodroit2.png'; break;
+            case 'infirmier': logogauche = 'logogauche3.png'; logodroit = 'logodroit3.png'; break;
+            case 'aide-soignant': logogauche = 'logogauche4.png'; logodroit = 'logodroit4.png'; break;
+            case 'malade': logogauche = 'logogauche5.png'; logodroit = 'logodroit5.png'; break;
+            case 'manipulateur': logogauche = 'logogauche6.png'; logodroit = 'logodroit6.png'; break;
+          }
+        }
+      %>
+      <img src="/images/<%= logogauche %>" alt="logo gauche personnalisé">
+
+      <div class="titre-et-tagline">
+        <h1>Service de Réanimation Médicale Polyvalente - CHU Mustapha</h1>
+        <p class="tagline">« Allier science et compassion en situation critique. »</p>
+      </div>
+
+      <% if (utilisateur) { %>
+        <img src="/images/<%= logodroit %>" alt="logo droit personnalisé">
+      <% } else { %>
+        <img src="/images/logodroit.png" alt="logo droit par défaut">
+      <% } %>
+    </div>
+
+    <nav>
+      <a href="/">Accueil</a>
+      <a href="/presentation">Présentation</a>
+      <a href="/equipe">Équipe</a>
+      <a href="/contact">Contact</a>
+      <a href="/formations">Formations</a>
+      <a href="/protocoles">Nos protocoles</a>
+      <a href="/experiences">Nos expériences</a>
+      <a href="/malades">Espace Malades</a>
+      <a href="/personnel">Espace Personnel</a>
+    </nav>
+  </header>
+
+  <!-- === CONTENU PRINCIPAL === -->
+  <main>
+    <!-- Zone de filtres -->
+    <section id="filters">
+      <form id="filter-form" class="filters">
+        <!-- Ligne 1 : Titre -->
+        <div class="filter-row title-row">
+          <div class="filter-group">
+            <label for="search-title">Titre :</label>
+            <input type="text" id="search-title" name="search-title" placeholder="Rechercher un titre..." />
+          </div>
+        </div>
+
+        <!-- Ligne 2 : Appareil, Type, Date -->
+        <div class="filter-row fields-row">
+          <div class="filter-group">
+            <label for="filter-apparatus">Appareil :</label>
+            <select id="filter-apparatus" name="filter-apparatus">
+              <option value="">Tous les appareils</option>
+              <option value="cardiovasculaire">Appareil cardiovasculaire</option>
+              <option value="digestif">Appareil digestif</option>
+              <option value="respiratoire">Appareil respiratoire</option>
+              <option value="urinaire">Appareil urinaire</option>
+              <option value="reproducteur">Appareil reproducteur</option>
+              <option value="locomoteur">Appareil locomoteur</option>
+              <option value="nerveux">Système nerveux</option>
+              <option value="endocrinien">Système endocrinien</option>
+              <option value="lymphatique">Système lymphatique</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-type">Type de formation :</label>
+            <select id="filter-type" name="filter-type">
+              <option value="">Tous les types</option>
+              <option value="video">Vidéo</option>
+              <option value="pdf">PDF</option>
+              <option value="powerpoint">PowerPoint</option>
+              <option value="quiz">Quiz</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-date">Date d'ajout :</label>
+            <input type="date" id="filter-date" name="filter-date" />
+          </div>
+        </div>
+
+        <!-- Ligne 3 : Bouton -->
+        <div class="filter-row button-row">
+          <button type="submit">Filtrer</button>
+        </div>
+      </form>
+
+
+    </section>
+
+    <!-- Liste des formations -->
+    <section id="formation-list" class="grid">
+      <% formations.forEach(f => { %>
+        <article class="formation-card" 
+          data-type="<%= f.type %>" 
+          data-apparatus="<%= f.apparatus %>" 
+          data-date="<%= f.dateAjout.toISOString().slice(0, 10) %>">
+
+          <h2 class="formation-title"><%= f.titre %></h2>
+          <p class="formation-description"><%= f.description %></p>
+
+          <div class="formation-meta">
+            <span class="formation-type">Type : <%= f.type.charAt(0).toUpperCase() + f.type.slice(1) %></span>
+            <span class="formation-date">Ajouté le : <%= f.dateAjout.toLocaleDateString('fr-FR') %></span>
+          </div>
+
+          <div class="formation-actions">
+            <button class="open-formation" data-id="<%= f._id %>">Ouvrir</button>
+            <a href="<%= f.url %>" download class="download-btn">Télécharger</a>
+            <button class="like-btn" data-id="<%= f._id %>">❤️ J'aime</button>
+            <button class="comment-btn" data-id="<%= f._id %>">💬 Commenter</button>
+
+            <div class="comment-section hidden" data-id="<%= f._id %>">
+              <textarea placeholder="Laissez un commentaire..." class="comment-input"></textarea>
+              <button class="submit-comment">Envoyer</button>
+              <ul class="comment-list"></ul>
+            </div>
+          </div>
+        </article>
+      <% }) %>
+    </section>
+  </main>
+
+  <!-- Modal pour afficher la formation -->
+  <div id="modal" class="hidden">
+    <div class="modal-content">
+      <span id="close-modal" class="close-btn">&times;</span>
+      <div id="modal-body">
+        <!-- Contenu dynamique injecté ici -->
+        <h2 id="modal-title"></h2>
+        <div id="modal-description"></div>
+        <div id="modal-file"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <% if (poster) { %>
+    <div class="poster-wrapper">
+      <a href="<%= poster.lien %>" target="_blank">
+        <img src="<%= poster.url %>" alt="poster">
+      </a>
+    </div>
+  <% } %>
+
+  <footer>
+    <p>&copy; 2025 Service de Réanimation - CHU Mustapha. Tous droits réservés.</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // ---------- Modal ----------
+      const modal = document.getElementById("modal");
+      const modalTitle = document.getElementById("modal-title");
+      const modalDescription = document.getElementById("modal-description");
+      const modalFile = document.getElementById("modal-file");
+      const closeModalBtn = document.getElementById("close-modal");
+
+      document.querySelectorAll(".open-formation").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const card = btn.closest(".formation-card");
+          const type = card.dataset.type;
+          const title = card.querySelector(".formation-title").textContent;
+          const desc = card.querySelector(".formation-description").textContent;
+          const fileUrl = card.querySelector(".download-btn").getAttribute("href");
+
+          modalTitle.textContent = title;
+          modalDescription.textContent = desc;
+          modalFile.innerHTML = "";
+
+          if (type === "video") {
+            modalFile.innerHTML = `<video controls src="${fileUrl}" width="100%"></video>`;
+          } else if (type === "pdf" || type === "powerpoint") {
+            modalFile.innerHTML = `<iframe src="${fileUrl}" width="100%" height="500px"></iframe>`;
+          } else if (type === "quiz") {
+            modalFile.innerHTML = `<iframe src="${fileUrl}" width="100%" height="500px"></iframe>`;
+          } else {
+            modalFile.innerHTML = `<a href="${fileUrl}" target="_blank">Voir le contenu</a>`;
+          }
+
+          modal.classList.remove("hidden");
+        });
+      });
+
+      closeModalBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+      });
+
+      // ---------- Likes ----------
+      document.querySelectorAll(".like-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const countSpan = btn.querySelector(".like-count");
+          let count = parseInt(countSpan.textContent, 10);
+          countSpan.textContent = count + 1;
+        });
+      });
+
+      // ---------- Commentaires ----------
+      document.querySelectorAll(".comment-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.id;
+          const section = document.querySelector(`.comment-section[data-id="${id}"]`);
+          section.classList.toggle("hidden");
+        });
+      });
+
+      document.querySelectorAll(".submit-comment").forEach((submitBtn) => {
+        submitBtn.addEventListener("click", () => {
+          const section = submitBtn.closest(".comment-section");
+          const input = section.querySelector(".comment-input");
+          const commentList = section.querySelector(".comment-list");
+
+          if (input.value.trim() !== "") {
+            const li = document.createElement("li");
+            li.textContent = input.value.trim();
+            commentList.appendChild(li);
+            input.value = "";
+          }
+        });
+      });
+
+      // ---------- Filtres ----------
+      const filterForm = document.getElementById("filter-form");
+      filterForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const title = document.getElementById("search-title").value.toLowerCase();
+        const apparatus = document.getElementById("filter-apparatus").value;
+        const type = document.getElementById("filter-type").value;
+        const date = document.getElementById("filter-date").value;
+
+        document.querySelectorAll(".formation-card").forEach((card) => {
+          const cardTitle = card.querySelector(".formation-title").textContent.toLowerCase();
+          const cardApparatus = card.dataset.apparatus;
+          const cardType = card.dataset.type;
+          const cardDate = card.dataset.date;
+
+          const matchesTitle = title === "" || cardTitle.includes(title);
+          const matchesApparatus = apparatus === "" || apparatus === cardApparatus;
+          const matchesType = type === "" || type === cardType;
+          const matchesDate = date === "" || cardDate === date;
+
+          if (matchesTitle && matchesApparatus && matchesType && matchesDate) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      });
+    });
+
+    🔔 Toggle Notifications avec animation
+    function toggleNotifications() {
+      const box = document.getElementById('notificationBox');
+
+      if (box.classList.contains('show')) {
+        box.classList.remove('show');
+        box.classList.add('hide');
+        setTimeout(() => {
+          box.style.display = 'none';
+        }, 200); // Match duration of slideFadeOut
+      } else {
+        box.style.display = 'block';
+        box.classList.remove('hide');
+        box.classList.add('show');
+      }
+    }
+
+    // Fermer la boîte si clic en dehors
+    document.addEventListener('click', function(event) {
+      const box = document.getElementById('notificationBox');
+      const button = document.querySelector('.btn-auth[onclick="toggleNotifications()"]');
+
+      if (!box || !button) return;
+
+      if (!box.contains(event.target) && !button.contains(event.target)) {
+        if (box.classList.contains('show')) {
+          box.classList.remove('show');
+          box.classList.add('hide');
+          setTimeout(() => {
+            box.style.display = 'none';
+          }, 200);
+        }
+      }
+    });
+      document.addEventListener('DOMContentLoaded', () => {
+        // === 1. Animation d'apparition des formations ===
+        const cards = document.querySelectorAll('.formation-card');
+        cards.forEach((card, index) => {
+          setTimeout(() => {
+            card.style.animationDelay = `${index * 100}ms`;
+            card.classList.add('visible');
+          }, index * 100);
+        });
+
+        // === 2. Gestion du modal ===
+        const modal = document.getElementById('modal');
+        const closeModalBtn = document.querySelector('.close-btn');
+        const openButtons = document.querySelectorAll('[data-open-modal]'); // boutons pour ouvrir
+
+        openButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+          });
+        });
+
+        if (closeModalBtn) {
+          closeModalBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+          });
+        }
+
+        // Fermer le modal en cliquant en dehors du contenu
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.add('hidden');
+          }
+        });
+
+        // === 3. Gestion optionnelle des thèmes dynamiques ===
+        const themeSelector = document.getElementById('theme-selector');
+        if (themeSelector) {
+          themeSelector.addEventListener('change', (e) => {
+            document.body.className = ''; // reset classes
+            document.body.classList.add(`${e.target.value}-theme`);
+          });
+        }
+
+        // === 4. Ajout classe visible aux cards pour animation ===
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.1
+        });
+
+        cards.forEach(card => observer.observe(card));
+      });
+    
+
+
+  </script>
+</body>
+</html>

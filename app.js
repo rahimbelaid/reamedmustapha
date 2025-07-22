@@ -9,6 +9,7 @@ const cloudinary = require('cloudinary').v2;
 const connectDB = require('./config/db'); // Importer la fonction de connexion à MongoDB
 connectDB(); // Connecter à MongoDB
 const cron = require('node-cron'); // 🔁 Cron pour exécuter receiveMail
+const methodOverride = require('method-override')
 const { exec } = require('child_process');
 const posterMiddleware = require('./middlewares/posterMiddleware'); // Middleware pour les posters
 const notificationsMiddleware = require('./middlewares/notificationsMiddleware');
@@ -55,6 +56,12 @@ app.use(flash());
 
 // ✅ Middleware global : rendre utilisateur et flash visibles dans les vues
 app.use((req, res, next) => {
+  if (req.session.utilisateur) {
+    req.user = req.session.utilisateur;
+  }
+  next();
+});
+app.use((req, res, next) => {
   const utilisateur = req.session.utilisateur || null;
   res.locals.utilisateur = utilisateur;
   res.locals.utilisateurConnecte = !!utilisateur;
@@ -64,6 +71,7 @@ app.use((req, res, next) => {
 });
 app.use(posterMiddleware);
 app.use(notificationsMiddleware);
+app.use(methodOverride('_method'));
 // ✅ Importation des routes
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
@@ -74,6 +82,7 @@ const messagerieRoutes = require('./routes/messagerie');
 const siteRoutes = require('./routes/site');
 const carouselRoutes = require('./routes/carousel');
 const posterRoutes = require('./routes/poster');
+const formationsRoutes = require('./routes/formations');
 
 // ✅ Utilisation des routes
 app.use(authRoutes);
@@ -87,6 +96,7 @@ app.use('/admin', siteRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use(carouselRoutes);
 app.use(posterRoutes);
+app.use(formationsRoutes)
 
 // ✅ Middleware pour gérer les erreurs 404
 app.use((req, res) => {

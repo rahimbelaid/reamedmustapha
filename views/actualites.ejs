@@ -278,12 +278,45 @@
                         </div>
                       <% } %>
 
-                      <script src="/js/script.js"></script>
                       <script>
                         function toggleContent(index) {
                           const card = document.getElementById('card-' + index);
                           card.classList.toggle('open');
                         }
+                        // 🔔 Toggle Notifications avec animation
+                        function toggleNotifications() {
+                          const box = document.getElementById('notificationBox');
+
+                          if (box.classList.contains('show')) {
+                            box.classList.remove('show');
+                            box.classList.add('hide');
+                            setTimeout(() => {
+                              box.style.display = 'none';
+                            }, 200); // Match duration of slideFadeOut
+                          } else {
+                            box.style.display = 'block';
+                            box.classList.remove('hide');
+                            box.classList.add('show');
+                          }
+                        }
+
+                        // Fermer la boîte si clic en dehors
+                        document.addEventListener('click', function(event) {
+                          const box = document.getElementById('notificationBox');
+                          const button = document.querySelector('.btn-auth[onclick="toggleNotifications()"]');
+
+                          if (!box || !button) return;
+
+                          if (!box.contains(event.target) && !button.contains(event.target)) {
+                            if (box.classList.contains('show')) {
+                              box.classList.remove('show');
+                              box.classList.add('hide');
+                              setTimeout(() => {
+                                box.style.display = 'none';
+                              }, 200);
+                            }
+                          }
+                        });
                       </script>
                     </body>
                     </html>
