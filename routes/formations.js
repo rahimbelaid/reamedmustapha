@@ -1,24 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const cloudinary = require('cloudinary').v2;
-const Formation = require('../models/Formation');
-const fs = require('fs');
-const path = require('path');
 const methodOverride = require('method-override');
-const { URL } = require('url');
+const Formation = require('../models/Formation');
+const { formationStorage } = require('../config/cloudinary'); // ✅ import du stockage formation Cloudinary
 
-// 📦 Config depuis .env
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECRET
-});
-
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage: formationStorage });
 router.use(methodOverride('_method'));
 
-// 📄 Liste des formations (affichage public ou interface)
+// 📄 Liste des formations (affichage public)
 router.get('/formations', async (req, res) => {
   try {
     const formations = await Formation.find().sort({ dateAjout: -1 });
@@ -33,7 +23,7 @@ router.get('/formations', async (req, res) => {
   }
 });
 
-// 🖼️ Page d'upload (formulaire ou admin)
+// 🖼️ Page admin (upload et gestion)
 router.get('/site', async (req, res) => {
   try {
     const formations = await Formation.find().sort({ dateAjout: -1 });
@@ -44,32 +34,23 @@ router.get('/site', async (req, res) => {
   }
 });
 
-// 📤 Upload d’une nouvelle formation
+// 📤 Upload d’une nouvelle formation vers Cloudinary
 router.post('/formations/upload', upload.single('fichier'), async (req, res) => {
   try {
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      resource_type: 'auto'
-    });
-
-    // Supprimer le fichier temporaire (async)
-    fs.unlink(req.file.path, (err) => {
-      if (err) console.error('Erreur suppression fichier temporaire :', err);
-    });
-
     const formation = new Formation({
       titre: req.body.titre,
       description: req.body.description,
       type: req.body.type,
       apparatus: req.body.apparatus,
-      url: result.secure_url,
-      publicId: result.public_id // stocke le public_id
+      url: req.file.path, // URL Cloudinary
+      publicId: req.file.filename // ID Cloudinary (utile pour suppression)
     });
 
     await formation.save();
     res.redirect('/site');
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Erreur upload');
+    console.error('Erreur upload formation :', err);
+    res.status(500).send('Erreur serveur');
   }
 });
 
@@ -79,20 +60,19 @@ router.delete('/formations/:id', async (req, res) => {
     const formation = await Formation.findById(req.params.id);
     if (!formation) return res.status(404).send('Formation non trouvée');
 
+    const cloudinary = require('cloudinary').v2;
+
     if (formation.publicId) {
       await cloudinary.uploader.destroy(formation.publicId, { resource_type: 'auto' });
-    } else {
-      // fallback si publicId non stocké
-      const publicId = path.parse(new URL(formation.url).pathname).name;
-      await cloudinary.uploader.destroy(publicId, { resource_type: 'auto' });
     }
 
     await formation.deleteOne();
     res.redirect('/site');
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Erreur suppression');
+    console.error('Erreur suppression formation :', err);
+    res.status(500).send('Erreur serveur');
   }
 });
 
 module.exports = router;
+

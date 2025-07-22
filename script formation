@@ -1,0 +1,12 @@
+<select id="filter-apparatus" name="filter-apparatus">
+  <option value="">Tous les appareils</option>
+  <option value="cardiovasculaire">Appareil cardiovasculaire</option>
+  <option value="digestif">Appareil digestif</option>
+  <option value="respiratoire">Appareil respiratoire</option>
+  <option value="urinaire">Appareil urinaire</option>
+  <option value="reproducteur">Appareil reproducteur</option>
+  <option value="locomoteur">Appareil locomoteur</option>
+  <option value="nerveux">Système nerveux</option>
+  <option value="endocrinien">Système endocrinien</option>
+  <option value="lymphatique">Système lymphatique</option>
+</select>

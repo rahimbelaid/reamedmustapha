@@ -1,6 +1,6 @@
 const Carousel = require('../models/carrousel.model');
 const Actualite = require('../models/actualite.model');
-const Formation = require('../models/formation.model'); // 🔹 Assure-toi que ce modèle existe et est bien importé
+const Formation = require('../models/Formation'); // 🔹 Assure-toi que ce modèle existe et est bien importé
 
 // Afficher la page admin avec actualités, images carrousel et formations
 exports.renderAdminPage = async (req, res) => {
