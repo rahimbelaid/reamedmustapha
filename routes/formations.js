@@ -31,6 +31,37 @@ router.get('/formations', async (req, res) => {
     res.status(500).send('Erreur serveur');
   }
 });
+app.post('/formations/:id/like', async (req, res) => {
+  try {
+    const formation = await Formation.findById(req.params.id);
+    formation.likes = (formation.likes || 0) + 1;
+    await formation.save();
+    res.json({ success: true, likes: formation.likes });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+});
+app.post('/formations/:id/comment', async (req, res) => {
+  try {
+    const { texte } = req.body;
+    const formation = await Formation.findById(req.params.id);
+    formation.commentaires.push({ texte });
+    await formation.save();
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+});
+
+
+app.get('/formations/:id/comments', async (req, res) => {
+  try {
+    const formation = await Formation.findById(req.params.id);
+    res.json({ success: true, comments: formation.commentaires });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+});
 
 // 🖼️ Page admin (upload et gestion)
 router.get('/site', async (req, res) => {
