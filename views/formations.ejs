@@ -289,6 +289,8 @@
       border-radius: 20px;
       width: 90%;
       max-width: 800px;
+      max-height: 70vh;
+      overflow-y: auto;
       position: relative;
       animation: slideUp 0.4s ease-out;
       box-shadow: 0 10px 30px rgba(0,0,0,0.25);
@@ -594,7 +596,7 @@
 
           <div class="formation-actions">
             <button class="open-formation"><i class="fas fa-eye"></i> Ouvrir</button>
-            <a class="download-btn" href="<%= f.url %>" download target="_blank">
+            <a class="download-btn" href="<%= f.fichierUrl %>" data-url="<%= f.fichierUrl %>" target="_blank" rel="noopener">
               <i class="fas fa-download"></i> Télécharger
             </a>
             <button class="like-btn"><i class="fas fa-heart"></i> J'aime <span class="like-count">0</span></button>
@@ -638,254 +640,189 @@
     <p>&copy; 2025 Service de Réanimation - CHU Mustapha. Tous droits réservés.</p>
   </footer>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // ---------- Modal ----------
-      const modal = document.getElementById("modal");
-      const modalTitle = document.getElementById("modal-title");
-      const modalDescription = document.getElementById("modal-description");
-      const modalFile = document.getElementById("modal-file");
-      const closeModalBtn = document.getElementById("close-modal");
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // === 1. MODALE (ouverture d'une formation) ===
+        const modal = document.getElementById("modal");
+        const modalTitle = document.getElementById("modal-title");
+        const modalDescription = document.getElementById("modal-description");
+        const modalFile = document.getElementById("modal-file");
+        const closeModalBtn = document.getElementById("close-modal");
 
-      document.querySelectorAll(".open-formation").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const card = btn.closest(".formation-card");
-          const type = card.dataset.type;
-          const title = card.querySelector(".formation-title").textContent;
-          const desc = card.querySelector(".formation-description").textContent;
-          const fileUrl = card.querySelector(".download-btn").getAttribute("href");
+        document.querySelectorAll(".open-formation").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const card = btn.closest(".formation-card");
+            const type = card.dataset.type;
+            const title = card.querySelector(".formation-title").textContent;
+            const desc = card.querySelector(".formation-description").textContent;
+            const fichierUrl = card.querySelector(".download-btn").getAttribute("data-url");
 
-          modalTitle.textContent = title;
-          modalDescription.textContent = desc;
-          modalFile.innerHTML = "";
-
-          if (type === "video") {
-            modalFile.innerHTML = `<video controls src="${url}" width="100%"></video>`;
-          } else if (type === "pdf" || type === "powerpoint") {
-            modalFile.innerHTML = `<iframe src="${url}" width="100%" height="500px"></iframe>`;
-          } else if (type === "quiz") {
-            modalFile.innerHTML = `<iframe src="${url}" width="100%" height="500px"></iframe>`;
-          } else {
-            modalFile.innerHTML = `<a href="${url}" target="_blank">Voir le contenu</a>`;
-          }
-
-          modal.classList.remove("hidden");
-        });
-      });
-
-      closeModalBtn.addEventListener("click", () => {
-        modal.classList.add("hidden");
-      });
-
-      // ---------- Likes ----------
-      document.querySelectorAll(".like-btn").forEach((btn) => {
-        btn.addEventListener("click", async () => {
-          const card = btn.closest(".formation-card");
-          const formationId = card.dataset.id;
-
-          const response = await fetch(`/formations/${formationId}/like`, {
-            method: "POST"
-          });
-
-          const data = await response.json();
-          if (data.success) {
-            const countSpan = btn.querySelector(".like-count");
-            countSpan.textContent = data.likes;
-          }
-        });
-      });
-
-      // ---------- Commentaires ----------
-      // Gérer le bouton "Commentaire" (ouvrir et charger les commentaires une seule fois)
-      document.querySelectorAll(".comment-btn").forEach((btn) => {
-        btn.addEventListener("click", async () => {
-          const card = btn.closest(".formation-card");
-          const section = card.querySelector(".comment-section");
-          const commentList = section.querySelector(".comment-list");
-          const formationId = section.dataset.id;
-
-          // Toggle l'affichage
-          section.classList.toggle("hidden");
-
-          // Charger les commentaires une seule fois
-          if (!section.dataset.loaded && !section.classList.contains("hidden")) {
-            try {
-              const response = await fetch(`/formations/${formationId}/comments`);
-              const data = await response.json();
-
-              if (data.success && Array.isArray(data.comments)) {
-                data.comments.forEach((comment) => {
-                  const li = document.createElement("li");
-                  li.textContent = comment.texte;
-                  commentList.appendChild(li);
-                });
-
-                // Marquer comme déjà chargé
-                section.dataset.loaded = "true";
-              }
-            } catch (error) {
-              console.error("Erreur lors du chargement des commentaires :", error);
+            modalTitle.textContent = title;
+            modalDescription.textContent = desc;
+            modalFile.innerHTML = "";
+            if (!fichierUrl) {
+              modalFile.innerHTML = "<p style='color: red;'>Fichier non disponible.</p>";
+              modal.classList.remove("hidden");
+              return;
             }
-          }
-        });
-      });
-
-      // Gérer le bouton "Envoyer" pour enregistrer un commentaire
-      document.querySelectorAll(".submit-comment").forEach((submitBtn) => {
-        submitBtn.addEventListener("click", async () => {
-          const section = submitBtn.closest(".comment-section");
-          const input = section.querySelector(".comment-input");
-          const commentList = section.querySelector(".comment-list");
-          const formationId = section.dataset.id;
-
-          const texte = input.value.trim();
-          if (texte === "") return;
-
-          try {
-            const response = await fetch(`/formations/${formationId}/comment`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ texte })
-            });
-
-            const data = await response.json();
-            if (data.success) {
-              const li = document.createElement("li");
-              li.textContent = texte;
-              commentList.appendChild(li);
-              input.value = "";
+            if (type === "video") {
+              modalFile.innerHTML = `<video controls src="${fichierUrl}" width="100%" style="max-height: 70vh;"></video>`;
+            } else if (type === "pdf") {
+              modalFile.innerHTML = `<iframe src="${fichierUrl}" width="100%" height="600px" style="border:none;"></iframe>`;
+            } else if (type === "powerpoint") {
+              modalFile.innerHTML = `<iframe src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fichierUrl)}" width="100%" height="600px" frameborder="0"></iframe>`;
+            } else if (type === "quiz") {
+              modalFile.innerHTML = `<iframe src="${fichierUrl}" width="100%" height="600px" style="border:none;"></iframe>`;
             } else {
-              console.error("Erreur lors de l'enregistrement du commentaire.");
+              modalFile.innerHTML = `<a href="${fichierUrl}" target="_blank" rel="noopener">Voir le contenu</a>`;
             }
-          } catch (error) {
-            console.error("Erreur serveur :", error);
-          }
-        });
-      });
-      document.querySelectorAll(".comment-btn").forEach((btn) => {
-        btn.addEventListener("click", async () => {
-          const card = btn.closest(".formation-card");
-          const section = card.querySelector(".comment-section");
-          const commentList = section.querySelector(".comment-list");
-          const formationId = section.dataset.id;
 
-          // toggle l'affichage
-          section.classList.toggle("hidden");
-
-          // éviter de recharger les commentaires à chaque clic
-          if (commentList.children.length > 0) return;
-
-          const response = await fetch(`/formations/${formationId}/comments`);
-          const data = await response.json();
-
-          if (data.success) {
-            data.comments.forEach(c => {
-              const li = document.createElement("li");
-              li.textContent = c.texte;
-              commentList.appendChild(li);
-            });
-          }
-        });
-      });
-
-      // ---------- Filtres ----------
-      const filterForm = document.getElementById("filter-form");
-      filterForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const title = document.getElementById("search-title").value.toLowerCase();
-        const apparatus = document.getElementById("filter-apparatus").value;
-        const type = document.getElementById("filter-type").value;
-        const date = document.getElementById("filter-date").value;
-
-        document.querySelectorAll(".formation-card").forEach((card) => {
-          const cardTitle = card.querySelector(".formation-title").textContent.toLowerCase();
-          const cardApparatus = card.dataset.apparatus;
-          const cardType = card.dataset.type;
-          const cardDate = card.dataset.date;
-
-          const matchesTitle = title === "" || cardTitle.includes(title);
-          const matchesApparatus = apparatus === "" || apparatus === cardApparatus;
-          const matchesType = type === "" || type === cardType;
-          const matchesDate = date === "" || cardDate === date;
-
-          if (matchesTitle && matchesApparatus && matchesType && matchesDate) {
-            card.style.display = "block";
-          } else {
-            card.style.display = "none";
-          }
-        });
-      });
-    });
-
-    🔔 Toggle Notifications avec animation
-    function toggleNotifications() {
-      const box = document.getElementById('notificationBox');
-
-      if (box.classList.contains('show')) {
-        box.classList.remove('show');
-        box.classList.add('hide');
-        setTimeout(() => {
-          box.style.display = 'none';
-        }, 200); // Match duration of slideFadeOut
-      } else {
-        box.style.display = 'block';
-        box.classList.remove('hide');
-        box.classList.add('show');
-      }
-    }
-
-    // Fermer la boîte si clic en dehors
-    document.addEventListener('click', function(event) {
-      const box = document.getElementById('notificationBox');
-      const button = document.querySelector('.btn-auth[onclick="toggleNotifications()"]');
-
-      if (!box || !button) return;
-
-      if (!box.contains(event.target) && !button.contains(event.target)) {
-        if (box.classList.contains('show')) {
-          box.classList.remove('show');
-          box.classList.add('hide');
-          setTimeout(() => {
-            box.style.display = 'none';
-          }, 200);
-        }
-      }
-    });
-      document.addEventListener('DOMContentLoaded', () => {
-        // === 1. Animation d'apparition des formations ===
-        const cards = document.querySelectorAll('.formation-card');
-        cards.forEach((card, index) => {
-          setTimeout(() => {
-            card.style.animationDelay = `${index * 100}ms`;
-            card.classList.add('visible');
-          }, index * 100);
-        });
-
-        // === 2. Gestion du modal ===
-        const modal = document.getElementById('modal');
-        const closeModalBtn = document.querySelector('.close-btn');
-        const openButtons = document.querySelectorAll('[data-open-modal]'); // boutons pour ouvrir
-
-        openButtons.forEach(btn => {
-          btn.addEventListener('click', () => {
-            modal.classList.remove('hidden');
+            modal.classList.remove("hidden");
           });
         });
 
         if (closeModalBtn) {
-          closeModalBtn.addEventListener('click', () => {
-            modal.classList.add('hidden');
+          closeModalBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+            modalFile.innerHTML = "";
           });
         }
 
-        // Fermer le modal en cliquant en dehors du contenu
-        modal.addEventListener('click', (e) => {
+        modal.addEventListener("click", (e) => {
           if (e.target === modal) {
-            modal.classList.add('hidden');
+            modal.classList.add("hidden");
+            modalFile.innerHTML = "";
           }
         });
 
-        // === 3. Gestion optionnelle des thèmes dynamiques ===
+        // === 2. FILTRES ===
+        const filterForm = document.getElementById("filter-form");
+        if (filterForm) {
+          filterForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const title = document.getElementById("search-title").value.toLowerCase();
+            const apparatus = document.getElementById("filter-apparatus").value;
+            const type = document.getElementById("filter-type").value;
+            const date = document.getElementById("filter-date").value;
+
+            document.querySelectorAll(".formation-card").forEach((card) => {
+              const cardTitle = card.querySelector(".formation-title").textContent.toLowerCase();
+              const cardApparatus = card.dataset.apparatus;
+              const cardType = card.dataset.type;
+              const cardDate = card.dataset.date;
+
+              const matchesTitle = title === "" || cardTitle.includes(title);
+              const matchesApparatus = apparatus === "" || apparatus === cardApparatus;
+              const matchesType = type === "" || type === cardType;
+              const matchesDate = date === "" || cardDate === date;
+
+              card.style.display = (matchesTitle && matchesApparatus && matchesType && matchesDate) ? "block" : "none";
+            });
+          });
+        }
+
+        // === 3. COMMENTAIRES ===
+        document.querySelectorAll(".comment-form").forEach((form) => {
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formationId = form.getAttribute("data-formation-id");
+            const commentInput = form.querySelector(".comment-input");
+            const commentText = commentInput.value.trim();
+
+            if (commentText) {
+              try {
+                const res = await fetch(`/formations/${formationId}/comment`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ texte: commentText })
+                });
+                const data = await res.json();
+                if (data.success) {
+                  const commentsList = document.querySelector(`#comments-${formationId}`);
+                  const newComment = document.createElement("p");
+                  newComment.textContent = commentText;
+                  commentsList.appendChild(newComment);
+                  commentInput.value = "";
+                }
+              } catch (err) {
+                console.error("Erreur ajout commentaire :", err);
+              }
+            }
+          });
+        });
+
+        // === 4. LIKES ===
+        document.querySelectorAll(".like-btn").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const formationId = button.getAttribute("data-formation-id");
+            const likeCountSpan = document.querySelector(`#like-count-${formationId}`);
+
+            try {
+              const response = await fetch(`/formations/${formationId}/like`, {
+                method: "POST"
+              });
+              const data = await response.json();
+              if (data.success) {
+                likeCountSpan.textContent = data.likes;
+              }
+            } catch (err) {
+              console.error("Erreur like :", err);
+            }
+          });
+        });
+
+        // === 5. NOTIFICATIONS TOGGLE ===
+        const notifButton = document.querySelector('.btn-auth[onclick="toggleNotifications()"]');
+        const notifBox = document.getElementById('notificationBox');
+        if (notifButton && notifBox) {
+          notifButton.addEventListener("click", () => {
+            if (notifBox.classList.contains("show")) {
+              notifBox.classList.remove("show");
+              notifBox.classList.add("hide");
+              setTimeout(() => {
+                notifBox.style.display = "none";
+              }, 200);
+            } else {
+              notifBox.style.display = "block";
+              notifBox.classList.remove("hide");
+              notifBox.classList.add("show");
+            }
+          });
+
+          document.addEventListener("click", function(event) {
+            if (!notifBox.contains(event.target) && !notifButton.contains(event.target)) {
+              if (notifBox.classList.contains("show")) {
+                notifBox.classList.remove("show");
+                notifBox.classList.add("hide");
+                setTimeout(() => {
+                  notifBox.style.display = "none";
+                }, 200);
+              }
+            }
+          });
+        }
+
+        // === 6. ANIMATION DES CARTES ===
+        const cards = document.querySelectorAll(".formation-card");
+        cards.forEach((card, index) => {
+          setTimeout(() => {
+            card.style.animationDelay = `${index * 100}ms`;
+            card.classList.add("visible");
+          }, index * 100);
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
+
+        cards.forEach(card => observer.observe(card));
+
+        // === 7. THÈME DYNAMIQUE (facultatif) ===
         const themeSelector = document.getElementById('theme-selector');
         if (themeSelector) {
           themeSelector.addEventListener('change', (e) => {
@@ -893,55 +830,7 @@
             document.body.classList.add(`${e.target.value}-theme`);
           });
         }
-
-        // === 4. Ajout classe visible aux cards pour animation ===
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('visible');
-              observer.unobserve(entry.target);
-            }
-          });
-        }, {
-          threshold: 0.1
-        });
-
-        cards.forEach(card => observer.observe(card));
       });
-    document.querySelectorAll(".open-formation").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const card = btn.closest(".formation-card");
-        const type = card.dataset.type;
-        const title = card.querySelector(".formation-title").textContent;
-        const desc = card.querySelector(".formation-description").textContent;
-        const fileUrl = card.querySelector(".download-btn").getAttribute("href"); // corrigé ici
-        modalTitle.textContent = title;
-        modalDescription.textContent = desc;
-        modalFile.innerHTML = "";
-        if (type === "video") {
-          modalFile.innerHTML = `<video controls src="${fileUrl}" width="100%"></video>`;
-        } else if (type === "pdf" || type === "powerpoint" || type === "quiz") {
-          modalFile.innerHTML = `<iframe src="${fileUrl}" width="100%" height="500px"></iframe>`;
-        } else {
-          modalFile.innerHTML = `<a href="${fileUrl}" target="_blank">Voir le contenu</a>`;
-        }
-        modal.classList.remove("hidden");
-      });
-    });
-    document.querySelectorAll(".submit-comment").forEach((submitBtn) => {
-      submitBtn.addEventListener("click", () => {
-        const section = submitBtn.closest(".comment-section");
-        const input = section.querySelector(".comment-input");
-        const commentList = section.querySelector(".comment-list");
-        if (input.value.trim() !== "") {
-          const li = document.createElement("li");
-          li.textContent = input.value.trim();
-          commentList.appendChild(li);
-          input.value = "";
-        }
-      });
-    });
-
-  </script>
+    </script>
 </body>
 </html>

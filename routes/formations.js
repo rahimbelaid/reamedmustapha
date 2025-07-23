@@ -10,10 +10,10 @@ const upload = multer({ storage: formationStorage });
 router.use(methodOverride('_method'));
 
 // 🔍 Déduction du type de fichier pour la suppression
-const getResourceType = (url) => {
-  if (!url) return 'raw'; // fallback
-  if (url.endsWith('.mp4')) return 'video';
-  if (url.endsWith('.pdf') || url.endsWith('.ppt') || url.endsWith('.pptx')) return 'raw';
+const getResourceType = (fichierUrl) => {
+  if (!fichierUrl) return 'raw'; // fallback
+  if (fichierUrl.endsWith('.mp4')) return 'video';
+  if (fichierUrl.endsWith('.pdf') || fichierUrl.endsWith('.ppt') || fichierUrl.endsWith('.pptx')) return 'raw';
   return 'image';
 };
 
@@ -82,7 +82,7 @@ router.post('/formations/upload', upload.single('fichier'), async (req, res) => 
       description: req.body.description,
       type: req.body.type,
       apparatus: req.body.apparatus,
-      url: req.file.path, // ✅ URL Cloudinary
+      fichiereurl: req.file.path, // ✅ URL Cloudinary
       publicId: req.file.filename // ✅ public_id Cloudinary
     });
 

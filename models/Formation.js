@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const FormationSchema = new mongoose.Schema({
   titre: { type: String, required: true },
   description: { type: String },
-  url: { type: String }, // ✅ bien structuré
   type: { type: String },
   apparatus: { type: String },
   fichierUrl: { type: String },
