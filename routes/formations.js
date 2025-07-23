@@ -31,7 +31,7 @@ router.get('/formations', async (req, res) => {
     res.status(500).send('Erreur serveur');
   }
 });
-app.post('/formations/:id/like', async (req, res) => {
+router.post('/formations/:id/like', async (req, res) => {
   try {
     const formation = await Formation.findById(req.params.id);
     formation.likes = (formation.likes || 0) + 1;
@@ -41,7 +41,7 @@ app.post('/formations/:id/like', async (req, res) => {
     res.status(500).json({ success: false });
   }
 });
-app.post('/formations/:id/comment', async (req, res) => {
+router.post('/formations/:id/comment', async (req, res) => {
   try {
     const { texte } = req.body;
     const formation = await Formation.findById(req.params.id);
@@ -54,7 +54,7 @@ app.post('/formations/:id/comment', async (req, res) => {
 });
 
 
-app.get('/formations/:id/comments', async (req, res) => {
+router.get('/formations/:id/comments', async (req, res) => {
   try {
     const formation = await Formation.findById(req.params.id);
     res.json({ success: true, comments: formation.commentaires });
