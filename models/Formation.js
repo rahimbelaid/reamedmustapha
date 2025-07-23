@@ -1,18 +1,21 @@
 const mongoose = require('mongoose');
 
-const formationSchema = new mongoose.Schema({
-  titre: String,
-  description: String,
-  type: String, // "video", "pdf", etc.
-  apparatus: String, // "cardiovasculaire", "digestif", etc.
+const FormationSchema = new mongoose.Schema({
+  titre: { type: String, required: true },
+  description: { type: String },
+  url: { type: String }, // ✅ bien structuré
+  type: { type: String },
+  apparatus: { type: String },
+  fichierUrl: { type: String },
+  dateAjout: { type: Date, default: Date.now },
   likes: { type: Number, default: 0 },
   commentaires: [
-    { auteur: String, texte: String, 
-date: { type: Date, default: Date.now } }
+    {
+      auteur: { type: String },
+      texte: { type: String },
+      date: { type: Date, default: Date.now }
+    }
   ]
-  url: String,
-  publicId: String, // ✅ AJOUT MANQUANT !
-  dateAjout: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Formation', formationSchema);
+module.exports = mongoose.model('Formation', FormationSchema);
